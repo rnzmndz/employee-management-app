@@ -62,7 +62,7 @@ public class Employee {
 	private String position;
 	
 	@ManyToOne
-	@JoinColumn(name = "department_id", nullable = false)
+	@JoinColumn(name = "department", nullable = false)
 	private Department department;
 	
 	@Column(name = "role", nullable = false)

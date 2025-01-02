@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.mapper.user.UserCreateMapper;
-import employee_management_app.dto.mapper.user.UserCredentialsMapper;
 import employee_management_app.dto.mapper.user.UserMapper;
 import employee_management_app.dto.mapper.user.UserUpdateMapper;
 import employee_management_app.dto.user.UserCreateDTO;
@@ -126,10 +125,6 @@ public class UserServiceImpl implements UserService {
 			}
 			existingUser.setUserName(updatedUser.getUserName());
 		}
-//		Verify if the data is correct
-		if (!updatedUser.getClass().isInstance(UserUpdateDTO.class)) {
-			throw new ValidationException("Updated data is invalid");
-		}
 		
 //		Update the entity from the data from DTO
 		updateMapper.updateEntityFromDto(updatedUser, existingUser);
@@ -150,7 +145,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
 	}
 
-	private void setDefaultPermissions(User user) {
+	protected void setDefaultPermissions(User user) {
 		if (user.getRole() == null) {
 			throw new IllegalArgumentException("User role cannot be null");
 		}
