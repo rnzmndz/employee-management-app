@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "employee" , indexes = {
-		@Index(name = "idx_employee_department", columnList = "department"),
+		@Index(name = "idx_employee_department", columnList = "department_id"),
 		@Index(name = "idx_employee_email", columnList = "email")
 })
 @Builder
@@ -62,7 +62,7 @@ public class Employee {
 	private String position;
 	
 	@ManyToOne
-	@JoinColumn(name = "department", nullable = false)
+	@JoinColumn(name = "department_id", nullable = false)
 	private Department department;
 	
 	@Column(name = "role", nullable = false)
@@ -72,8 +72,9 @@ public class Employee {
 	private LocalDateTime dateHired;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "active", nullable = false)
-	private EmployeeStatus status;
+	@Column(name = "status", nullable = false)
+	@Builder.Default
+	private EmployeeStatus status = EmployeeStatus.ACTIVE;
 	
 	@CreatedDate
 	@Column(name = "created_at", updatable = false)

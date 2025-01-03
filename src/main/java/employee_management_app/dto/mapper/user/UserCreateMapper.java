@@ -1,5 +1,6 @@
 package employee_management_app.dto.mapper.user;
 
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -15,7 +16,9 @@ public interface UserCreateMapper {
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	@Mapping(target = "status", expression = "java(employee_management_app.model.enums.UserStatus.ACTIVE)")
-	@Mapping(target = "accountNonLocked", constant = "true")
-	@Mapping(target = "failedAttempt", constant = "0")
 	User toEntity(UserCreateDTO userCreateDTO);
+	
+	@InheritInverseConfiguration
+    @Mapping(target = "employeeId", source = "employee.id")
+    UserCreateDTO toDTO(User user);
 }
