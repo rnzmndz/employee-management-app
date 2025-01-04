@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
+import employee_management_app.model.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class ScheduleDTO {
 	
     private Long id;
-    private Long employeeId;
+    private Employee employee;
     private Date date;
     private LocalTime shiftStartTime;
 	private LocalTime shiftEndTime;

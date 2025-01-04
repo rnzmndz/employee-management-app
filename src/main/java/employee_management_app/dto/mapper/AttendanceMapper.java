@@ -11,14 +11,12 @@ import employee_management_app.model.Attendance;
 public interface AttendanceMapper {
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "employee.id", source = "employeeId")
 	@Mapping(target = "employee.firstName", expression = "java(splitEmployeeName(attendanceDTO.getEmployeeName())[0])")
 	@Mapping(target = "employee.lastName", expression = "java(splitEmployeeName(attendanceDTO.getEmployeeName())[1])")
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	Attendance toEntity(AttendanceDTO attendanceDTO);
 	
-	@Mapping(target = "employeeName", expression = "java(combineEmployeeName(attendance.getEmployee().getFirstName(), attendance.getEmployee().getLastName()))")
 	AttendanceDTO toDto(Attendance attendance);
 	
 	default String[] splitEmployeeName(String employeeName) {

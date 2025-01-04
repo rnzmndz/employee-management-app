@@ -2,6 +2,7 @@ package employee_management_app.dto.attendance;
 
 import java.time.LocalDateTime;
 
+import employee_management_app.model.Employee;
 import employee_management_app.model.enums.AttendanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AttendanceDTO {
     private Long id;
-    private Long employeeId;
-    private String employeeName;
+    private Employee employee;
     private LocalDateTime date;
     private LocalDateTime timeIn;
     private LocalDateTime timeOut;
