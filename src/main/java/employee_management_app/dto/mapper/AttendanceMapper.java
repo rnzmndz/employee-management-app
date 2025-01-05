@@ -1,5 +1,7 @@
 package employee_management_app.dto.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -11,19 +13,9 @@ import employee_management_app.model.Attendance;
 public interface AttendanceMapper {
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "employee.firstName", expression = "java(splitEmployeeName(attendanceDTO.getEmployeeName())[0])")
-	@Mapping(target = "employee.lastName", expression = "java(splitEmployeeName(attendanceDTO.getEmployeeName())[1])")
-	@Mapping(target = "createdAt", ignore = true)
-	@Mapping(target = "updatedAt", ignore = true)
 	Attendance toEntity(AttendanceDTO attendanceDTO);
 	
-	AttendanceDTO toDto(Attendance attendance);
+	AttendanceDTO toDTO(Attendance attendance);
 	
-	default String[] splitEmployeeName(String employeeName) {
-		return employeeName.split(" ");
-	}
-	
-	default String combineEmployeeName(String firstName, String lastName) {
-		return firstName + " " + lastName;
-	}
+	List<AttendanceDTO> toList(List<Attendance> attendance);
 }

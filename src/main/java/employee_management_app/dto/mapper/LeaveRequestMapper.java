@@ -10,10 +10,13 @@ import employee_management_app.model.LeaveRequest;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface LeaveRequestMapper {
 // TODO create LeaveRequestMapper
-	@Mapping(target = "employeeId", ignore = true)
     LeaveRequestDTO toDTO(LeaveRequest leaveRequest);
     
-    @Mapping(target = "employee.id", source = "employeeId")
+    @Mapping(target = "id", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "employee.id", source = "requestedByEmployeeId")
+    @Mapping(target = "approvedBy.id", source = "approvedByEmployeeId")
     LeaveRequest toEntity(LeaveRequestDTO leaveRequestDTO);
 
 }

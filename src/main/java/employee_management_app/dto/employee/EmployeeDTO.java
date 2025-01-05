@@ -20,11 +20,9 @@ public class EmployeeDTO {
 	private String email;
 	private String phone;
 	private String position;
-	private Long departmentId;
 	private String departmentName;
+	private Long departmentId;
 	private String role;
 	private LocalDateTime dateHired;
 	private EmployeeStatus status;
-	private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

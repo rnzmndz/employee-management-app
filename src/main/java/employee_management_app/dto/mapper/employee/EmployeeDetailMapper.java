@@ -1,5 +1,6 @@
 package employee_management_app.dto.mapper.employee;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
@@ -8,7 +9,7 @@ import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
 
 import employee_management_app.dto.attendance.AttendanceDTO;
 import employee_management_app.dto.employee.EmployeeDetailDTO;
@@ -38,47 +39,62 @@ import employee_management_app.model.enums.LeaveRequestStatus;
 public interface EmployeeDetailMapper {
 //	XXX Review EmployeeDetailMapper
 	
-	@Mapping(target = "recentAttendance", source = "attendanceRecords", qualifiedByName = "toRecentAttendance")
-	@Mapping(target = "currentSchedules", source = "schedules", qualifiedByName = "toCurrentSchedules")
-	@Mapping(target = "activeLeaveRequests", source = "leaveRequests", qualifiedByName = "toActiveLeaveRequests")
-	EmployeeDetailDTO toDTO(Employee employee);
+	EmployeeDetailMapper INSTANCE = Mappers.getMapper(EmployeeDetailMapper.class);
 	
-	@Named("toRecentAttendance")
-	default Set<AttendanceDTO> mapRecentAttendance(Set<Attendance> attendance) {
-		return attendance.stream()
-				.filter(a -> a.getDate().isAfter(LocalDateTime.now().minusDays(30)))
-				.map(a -> this.mapAttendance(a))
-				.collect(Collectors.toSet());
-	}
+	@Mapping(source = "attendanceRecords", target = "recentAttendance", qualifiedByName = "toRecentAttendance")
+    @Mapping(source = "schedules", target = "currentSchedules", qualifiedByName = "toCurrentSchedules")
+    @Mapping(source = "leaveRequests", target = "activeLeaveRequests", qualifiedByName = "toActiveLeaveRequests")
+    EmployeeDetailDTO toDTO(Employee employee);
+    
+    @Named("toRecentAttendance")
+    default Set<AttendanceDTO> toRecentAttendance(Set<Attendance> attendanceRecords) {
+        if (attendanceRecords == null) {
+            return null;
+        }
+        // Filter for recent attendance records (e.g., last 30 days)
+        return attendanceRecords.stream()
+            .filter(this::isRecent)
+            .map(attendance -> Mappers.getMapper(AttendanceMapper.class).toDTO(attendance))
+            .collect(Collectors.toSet());
+    }
+    
+    @Named("toCurrentSchedules")
+    default Set<ScheduleDTO> toCurrentSchedules(Set<Schedule> schedules) {
+        if (schedules == null) {
+            return null;
+        }
+        // Filter for current/upcoming schedules
+        return schedules.stream()
+            .filter(this::isCurrent)
+            .map(schedule -> Mappers.getMapper(ScheduleMapper.class).toDTO(schedule))
+            .collect(Collectors.toSet());
+    }
+
+    @Named("toActiveLeaveRequests")
+    default Set<LeaveRequestDTO> toActiveLeaveRequests(Set<LeaveRequest> leaveRequests) {
+        if (leaveRequests == null) {
+            return null;
+        }
+        // Filter for active leave requests
+        return leaveRequests.stream()
+            .filter(this::isActive)
+            .map(leaveRequest -> Mappers.getMapper(LeaveRequestMapper.class).toDTO(leaveRequest))
+            .collect(Collectors.toSet());
+    }
 	
-	@Named("toCurrentSchedules")
-	default Set<ScheduleDTO> mapCurrentSchedules(Set<Schedule> schedule) {
-		return schedule.stream()
-				.filter(s -> s.getShiftEndTime().isAfter(LocalTime.now()))
-				.map(s -> this.mapSchedule(s))
-				.collect(Collectors.toSet());
-	}
-	
-	@Named("toActiveLeaveRequests")
-	default Set<LeaveRequestDTO> mapActiveLeaveRequests(Set<LeaveRequest> leaveRequests) {
-		return leaveRequests.stream()
-				.filter(lr -> lr.getStatus() == LeaveRequestStatus.PENDING ||
-                (lr.getStatus() == LeaveRequestStatus.APPROVED &&
-                 lr.getEndDate().isAfter(LocalDateTime.now())))
-				.map(lr -> this.mapLeaveRequest(lr))
-	            .collect(Collectors.toSet());
-   
-	}
-	
-	@Named("mapAttendance")
-	@Mapping(target = "employee",ignore = true)
-	AttendanceDTO mapAttendance(Attendance attendance);
-	
-	@Named("mapSchedule")
-	@Mapping(target = "employee",ignore = true)
-	ScheduleDTO mapSchedule(Schedule schedule);
-	
-	@Named("mapLeaveRequest")
-	@Mapping(target = "employee",ignore = true)
-	LeaveRequestDTO mapLeaveRequest(LeaveRequest leaveRequest);
+    default boolean isRecent(Attendance attendance) {
+        // Check if attendance record is recent
+    	return attendance.getDate().isAfter(LocalDate.now().minusDays(30));
+    }
+
+    default boolean isCurrent(Schedule schedule) {
+        // Check if schedule is current/upcoming
+        return schedule.getShiftEndTime().isAfter(LocalTime.now());
+    }
+
+    default boolean isActive(LeaveRequest leaveRequest) {
+        // Check if leave request is active
+        return leaveRequest.getStatus() == LeaveRequestStatus.PENDING || 
+                leaveRequest.getStatus() == LeaveRequestStatus.APPROVED;
+    }
 }

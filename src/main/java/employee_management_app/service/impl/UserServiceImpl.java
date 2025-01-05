@@ -26,7 +26,6 @@ import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 
 @Service
 @Transactional
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+	 
 	@Autowired
     private UserMapper userMapper;
     @Autowired

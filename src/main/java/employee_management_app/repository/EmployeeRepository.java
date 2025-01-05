@@ -1,5 +1,7 @@
 package employee_management_app.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>{
 	Page<Employee> findByDepartment(String departmentName, Pageable pageable);
 	Page<Employee> findByStatus(EmployeeStatus status, Pageable pageable);
 	Page<Employee> findByPosition(String Position, Pageable pageable);
+	
+	List<Employee> findByDepartment(String departmentName);
+	List<Employee> findByPosition(String Position);
 }

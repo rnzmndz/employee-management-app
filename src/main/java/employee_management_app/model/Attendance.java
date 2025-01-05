@@ -2,6 +2,7 @@ package employee_management_app.model;
 
 import java.beans.Transient;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -48,25 +49,17 @@ public class Attendance {
 	private Employee employee;
 	
 	@Column(name = "date", nullable = false)
-	private LocalDateTime date;
+	private LocalDate date;
 	
-	@Column(name = "time_in", nullable = false)
+	@Column(name = "time_in")
 	private LocalDateTime timeIn;
 	
-	@Column(name = "time_out", nullable = false)
+	@Column(name = "time_out")
 	private LocalDateTime timeOut;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private AttendanceStatus status;
-	
-	@CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-	
-	@LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 	
 	@AssertTrue(message = "Time out must be after time in")
     private boolean isTimeOutAfterTimeIn() {
