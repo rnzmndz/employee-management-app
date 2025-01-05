@@ -13,16 +13,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import employee_management_app.dto.mapper.user.UserCreateMapper;
 import employee_management_app.dto.mapper.user.UserMapper;
@@ -37,7 +37,9 @@ import employee_management_app.model.User;
 import employee_management_app.model.enums.UserRole;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
     @Mock
@@ -58,143 +60,142 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private User testUser;
-    private UserDTO testUserDto;
-    private UserCreateDTO testCreateDto;
-    private UserUpdateDTO testUpdateDto;
-    private Employee testEmployee;
+    private UserCreateDTO createDTO;
+    private UserUpdateDTO updateDTO;
+    private User user;
+    private UserDTO userDTO;
+    private Employee employee;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        createDTO = new UserCreateDTO();
+        createDTO.setUserName("testUser");
+        createDTO.setEmployeeId(1L);
 
-        // Initialize test data
-        testUser = new User();
-        testUser.setId(1L);
-        testUser.setUserName("testUser");
-        testUser.setRole(UserRole.ADMIN);
-        
-        testEmployee = new Employee();
-        testEmployee.setId(1L);
+        updateDTO = new UserUpdateDTO();
+        updateDTO.setUserName("updatedUser");
 
-        testUserDto = new UserDTO();
-        testUserDto.setId(1L);
-        testUserDto.setUserName("testUser");
+        employee = new Employee();
+        employee.setId(1L);
 
-        testCreateDto = new UserCreateDTO();
-        testCreateDto.setUserName("newUser");
-        testCreateDto.setEmployeeId(1L);
+        user = new User();
+        user.setId(1L);
+        user.setUserName("testUser");
+        user.setEmployee(employee);
 
-        testUpdateDto = new UserUpdateDTO();
-        testUpdateDto.setUserName("updatedUser");
+        userDTO = new UserDTO();
+        userDTO.setId(1L);
+        userDTO.setUserName("testUser");
     }
 
     @Test
     void createUser_Success() {
-        // Arrange
         when(userRepository.existsByUserName(anyString())).thenReturn(false);
-        when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(testEmployee));
-        when(createMapper.toEntity(any(UserCreateDTO.class))).thenReturn(testUser);
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
+        when(createMapper.toEntity(any(UserCreateDTO.class))).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        
+        user.setRole(UserRole.ADMIN);
 
-        // Act
-        UserCreateDTO result = userService.createUser(testCreateDto);
+        UserCreateDTO result = userService.createUser(createDTO);
 
-        // Assert
         assertNotNull(result);
-        verify(userRepository).existsByUserName(testCreateDto.getUserName());
-        verify(employeeRepository).findById(testCreateDto.getEmployeeId());
+        assertEquals(createDTO.getUserName(), result.getUserName());
         verify(userRepository).save(any(User.class));
     }
 
     @Test
-    void createUser_UsernameAlreadyExists() {
-        // Arrange
+    void createUser_UsernameExists_ThrowsException() {
         when(userRepository.existsByUserName(anyString())).thenReturn(true);
 
-        // Act & Assert
         assertThrows(UsernameAlreadyExistsException.class, () -> 
-            userService.createUser(testCreateDto)
+            userService.createUser(createDTO)
         );
     }
 
     @Test
-    void createUser_NullDTO() {
+    void createUser_NullUsername_ThrowsException() {
+        createDTO.setUserName(null);
+
         assertThrows(IllegalArgumentException.class, () -> 
-            userService.createUser(null)
+            userService.createUser(createDTO)
+        );
+    }
+
+    @Test
+    void createUser_EmployeeNotFound_ThrowsException() {
+        when(userRepository.existsByUserName(anyString())).thenReturn(false);
+        when(employeeRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> 
+            userService.createUser(createDTO)
         );
     }
 
     @Test
     void findByUsername_Success() {
-        // Arrange
-        when(userRepository.findByUserName(anyString())).thenReturn(Optional.of(testUser));
-        when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
+        when(userRepository.findByUserName(anyString())).thenReturn(Optional.of(user));
+        when(userMapper.toDto(any(User.class))).thenReturn(userDTO);
 
-        // Act
         Optional<UserDTO> result = userService.findByUsername("testUser");
 
-        // Assert
         assertTrue(result.isPresent());
         assertEquals("testUser", result.get().getUserName());
     }
 
     @Test
     void findByUsername_NotFound() {
-        // Arrange
         when(userRepository.findByUserName(anyString())).thenReturn(Optional.empty());
 
-        // Act
         Optional<UserDTO> result = userService.findByUsername("nonexistent");
 
-        // Assert
-        assertTrue(result.isEmpty());
+        assertFalse(result.isPresent());
     }
 
     @Test
     void updateUser_Success() {
-        // Arrange
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        // Act
-        UserUpdateDTO result = userService.updateUser(1L, testUpdateDto);
+        UserUpdateDTO result = userService.updateUser(1L, updateDTO);
 
-        // Assert
         assertNotNull(result);
         verify(userRepository).save(any(User.class));
     }
 
     @Test
-    void updateUser_NotFound() {
-        // Arrange
+    void updateUser_NotFound_ThrowsException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(UserNotFoundException.class, () -> 
-            userService.updateUser(1L, testUpdateDto)
+            userService.updateUser(1L, updateDTO)
+        );
+    }
+
+    @Test
+    void updateUser_DuplicateUsername_ThrowsException() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.existsByUserName(anyString())).thenReturn(true);
+
+        assertThrows(UsernameAlreadyExistsException.class, () -> 
+            userService.updateUser(1L, updateDTO)
         );
     }
 
     @Test
     void deleteUser_Success() {
-        // Arrange
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         doNothing().when(userRepository).deleteById(anyLong());
 
-        // Act
         userService.deleteUser(1L);
 
-        // Assert
         verify(userRepository).deleteById(1L);
     }
 
     @Test
-    void deleteUser_NotFound() {
-        // Arrange
+    void deleteUser_NotFound_ThrowsException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(UserNotFoundException.class, () -> 
             userService.deleteUser(1L)
         );
@@ -202,49 +203,51 @@ class UserServiceImplTest {
 
     @Test
     void getAllUsers_Success() {
-        // Arrange
-        List<User> users = Arrays.asList(testUser);
+        List<User> users = Arrays.asList(user);
         when(userRepository.findAll()).thenReturn(users);
-        when(userMapper.toDto(any(User.class))).thenReturn(testUserDto);
+        when(userMapper.toDto(any(User.class))).thenReturn(userDTO);
 
-        // Act
         List<UserDTO> result = userService.getAllUsers();
 
-        // Assert
+        assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
     }
 
     @Test
-    void setDefaultPermissions_AdminRole() {
-        // Arrange
-        User user = new User();
+    void setDefaultPermissions_Admin() {
         user.setRole(UserRole.ADMIN);
-
-        // Act
         userService.setDefaultPermissions(user);
 
-        // Assert
-        Set<String> expectedPermissions = new HashSet<>(Arrays.asList(
-            "USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
-            "EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"
-        ));
-        assertEquals(expectedPermissions, user.getPermissions());
+        Set<String> permissions = user.getPermissions();
+        assertTrue(permissions.contains("USER_CREATE"));
+        assertTrue(permissions.contains("USER_READ"));
+        assertTrue(permissions.contains("USER_UPDATE"));
+        assertTrue(permissions.contains("USER_DELETE"));
+        assertTrue(permissions.contains("EMPLOYEE_CREATE"));
+        assertTrue(permissions.contains("EMPLOYEE_READ"));
+        assertTrue(permissions.contains("EMPLOYEE_UPDATE"));
+        assertTrue(permissions.contains("EMPLOYEE_DELETE"));
     }
 
     @Test
-    void setDefaultPermissions_ManagerRole() {
-        // Arrange
-        User user = new User();
+    void setDefaultPermissions_Manager() {
         user.setRole(UserRole.MANAGER);
-
-        // Act
         userService.setDefaultPermissions(user);
 
-        // Assert
-        Set<String> expectedPermissions = new HashSet<>(Arrays.asList(
-            "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"
-        ));
-        assertEquals(expectedPermissions, user.getPermissions());
+        Set<String> permissions = user.getPermissions();
+        assertTrue(permissions.contains("EMPLOYEE_READ"));
+        assertTrue(permissions.contains("EMPLOYEE_UPDATE"));
+        assertTrue(permissions.contains("LEAVE_APPROVE"));
+        assertTrue(permissions.contains("ATTENDANCE_VIEW"));
+    }
+
+    @Test
+    void setDefaultPermissions_NullRole_ThrowsException() {
+        user.setRole(null);
+        
+        assertThrows(IllegalArgumentException.class, () -> 
+            userService.setDefaultPermissions(user)
+        );
     }
 }

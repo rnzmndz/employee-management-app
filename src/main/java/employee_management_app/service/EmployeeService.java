@@ -212,6 +212,7 @@ public interface EmployeeService {
      */
     boolean existsByPhone(String phone);
 
+//    XXX Let's do this in the future
     /**
      * Validates if an employee can be transferred to a new department.
      *
