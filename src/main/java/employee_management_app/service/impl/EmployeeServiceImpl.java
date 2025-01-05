@@ -1,9 +1,9 @@
 package employee_management_app.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,6 +23,7 @@ import employee_management_app.dto.leaverequest.LeaveRequestDTO;
 import employee_management_app.dto.mapper.AttendanceMapper;
 import employee_management_app.dto.mapper.EntityUpdater;
 import employee_management_app.dto.mapper.LeaveRequestMapper;
+import employee_management_app.dto.mapper.ScheduleMapper;
 import employee_management_app.dto.mapper.employee.EmployeeCreateMapper;
 import employee_management_app.dto.mapper.employee.EmployeeDetailMapper;
 import employee_management_app.dto.mapper.employee.EmployeeListMapper;
@@ -34,11 +35,13 @@ import employee_management_app.model.Attendance;
 import employee_management_app.model.Department;
 import employee_management_app.model.Employee;
 import employee_management_app.model.LeaveRequest;
+import employee_management_app.model.Schedule;
 import employee_management_app.model.enums.EmployeeStatus;
 import employee_management_app.repository.AttendanceRepository;
 import employee_management_app.repository.DepartmentRepository;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.LeaveRequestRepository;
+import employee_management_app.repository.ScheduleRepository;
 import employee_management_app.service.EmployeeService;
 import jakarta.transaction.Transactional;
 
@@ -59,6 +62,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 	private LeaveRequestRepository leaveRequestRepository;
 	
 	@Autowired
+	private ScheduleRepository scheduleRepository;
+	
+	@Autowired
 	private EmployeeMapper employeeMapper;
 	@Autowired
 	private EmployeeCreateMapper createMapper;
@@ -74,6 +80,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 	
 	@Autowired
 	private LeaveRequestMapper leaveRequestMapper;
+	
+	@Autowired
+	private ScheduleMapper scheduleMapper;
 	
 	@Override
 	public EmployeeDTO createEmployee(EmployeeCreateDTO createEmployeeDTO) {
@@ -350,7 +359,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 		Employee employee = employeeRepository.findById(employeeId)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
 
-//		Convert LeaveRequestDTO into  LeaveRequest entity
+//		Convert LeaveRequestDTO into LeaveRequest entity
 		LeaveRequest leaveRequest = leaveRequestMapper.toEntity(leaveRequestDTO);
 		
 //		Check if attendance employeeId is equals to our employeeId
@@ -373,70 +382,111 @@ public class EmployeeServiceImpl implements EmployeeService{
 		}
 		
 //		Find the Employee in the database
-		employeeRepository.findById(employeeId)
+		Employee employee = employeeRepository.findById(employeeId)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
 		
 //		Get all the attendance between those dates
-		Page<Attendance> attendances = attendanceRepository.findByDateRange(startDate, endDate);
+		Page<LeaveRequest> leaveRequests = leaveRequestRepository.findByEmployee(employee);
 		
-//		Filter the attendance
-		List<Attendance> filteredAttendance = attendances.getContent().stream()
-				.filter(attendance -> attendance.getEmployee().getId() == employeeId)
-				.collect(Collectors.toList());
-			
-//		Convert the Attendance List into AttendanceDTO List
-		List<AttendanceDTO> attendanceDTOs = attendanceMapper.toList(filteredAttendance);
+//		Convert the Leave Request entity into 
+		List<LeaveRequestDTO> leaveRequestDTOs = leaveRequestMapper.toDtoList(leaveRequests.getContent());
 		
-		return new PageImpl<>(attendanceDTOs, pageable, attendances.getTotalElements());
+		return new PageImpl<>(leaveRequestDTOs, pageable, leaveRequests.getTotalElements());
 	
 	}
 
 	@Override
 	public ScheduleDTO assignSchedule(Long employeeId, ScheduleDTO scheduleDTO) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//		The paramaters should be valid and not null
+		if(employeeId == null || employeeId < 0) {
+			throw new IllegalArgumentException("ID must be valid and not null");
+		}
+		
+//		Find the Employee in the database
+		Employee employee = employeeRepository.findById(employeeId)
+				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
+		
+//		Convert ScheduleDTO into Schedule entity
+		Schedule schedule = scheduleMapper.toEntity(scheduleDTO);
+		
+//		Check if the assigned schedule is same as the employee ID
+		if(employee.getId() != schedule.getEmployee().getId()) {
+			schedule.setEmployee(employee);
+		}
+		
+//		Save the schedule
+		scheduleRepository.save(schedule);
+		
+		return scheduleMapper.toDTO(schedule);
+}
 
 	@Override
-	public List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDateTime startDate, LocalDateTime endDate) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDate startDate, LocalDate endDate) {
+//		The paramaters should be valid and not null
+		if(employeeId == null || employeeId < 0) {
+			throw new IllegalArgumentException("ID must be valid and not null");
+		}
+		
+//		Find the Employee in the database
+		Employee employee = employeeRepository.findById(employeeId)
+				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
+
+//		Find all Schedule for specifice employee
+		Page<Schedule> schedules = scheduleRepository.findByEmployee(employee);
+		
+//		Filter and convert the list into ScheduleDTO
+		return scheduleMapper.toDtoList(
+				schedules.getContent().stream()
+				.filter(schedule -> schedule.getDate().isAfter(startDate))
+				.filter(schedule -> schedule.getDate().isBefore(endDate))
+				.collect(Collectors.toList()));
 	}
 
 	@Override
 	public boolean existsByEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
+		return employeeRepository.existsByEmail(email);
 	}
 
 	@Override
 	public boolean existsByPhone(String phone) {
-		// TODO Auto-generated method stub
-		return false;
+		return employeeRepository.existsByPhone(phone);
 	}
 
-	@Override
-	public void validateEmployeeTransfer(Long employeeId, Long newDepartmentId) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public Map<String, Integer> getEmployeeStatsByDepartment() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Employee> employees = employeeRepository.findAll();
+	    
+	    return employees.stream()
+	        .filter(employee -> employee.getStatus() == EmployeeStatus.ACTIVE)
+	        .collect(Collectors.groupingBy(
+	            employee -> employee.getDepartment().getName(),
+	            Collectors.collectingAndThen(
+	                Collectors.counting(),
+	                Long::intValue
+	            )
+	        ));
 	}
 
 	@Override
 	public Map<EmployeeStatus, Long> getEmployeeCountByStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		 List<Employee> employees = employeeRepository.findAll();
+		    
+		    return employees.stream()
+		        .collect(Collectors.groupingBy(
+		            Employee::getStatus,
+		            Collectors.counting()
+		        ));
 	}
 
 	@Override
 	public List<EmployeeListDTO> findEmployeesHiredBetween(LocalDateTime startDate, LocalDateTime endDate) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Employee> employees = employeeRepository.findAll();
+		
+		return listMapper.toDtoList(employees.stream()
+				.filter(employee -> employee.getDateHired().isAfter(startDate))
+				.filter(employee -> employee.getDateHired().isBefore(endDate))
+				.collect(Collectors.toList()));
 	}
 
 }

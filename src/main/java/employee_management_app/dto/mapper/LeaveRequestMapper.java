@@ -1,5 +1,7 @@
 package employee_management_app.dto.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -19,4 +21,5 @@ public interface LeaveRequestMapper {
     @Mapping(target = "approvedBy.id", source = "approvedByEmployeeId")
     LeaveRequest toEntity(LeaveRequestDTO leaveRequestDTO);
 
+    List<LeaveRequestDTO> toDtoList(List<LeaveRequest> leaveRequests);
 }

@@ -1,5 +1,6 @@
 package employee_management_app.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -192,8 +193,8 @@ public interface EmployeeService {
      * @param endDate End of the date range
      * @return List of ScheduleDTO for the specified period
      */
-    List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDateTime startDate, 
-            LocalDateTime endDate);
+    List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDate startDate, 
+            LocalDate endDate);
 
     /**
      * Checks if an email address is already registered to an employee.
@@ -219,7 +220,7 @@ public interface EmployeeService {
      * @throws ResourceNotFoundException if employee or department not found
      * @throws IllegalStateException if transfer is not allowed
      */
-    void validateEmployeeTransfer(Long employeeId, Long newDepartmentId);
+//    void validateEmployeeTransfer(Long employeeId, Long newDepartmentId);
 
     /**
      * Gets employee count statistics grouped by department.

@@ -1,5 +1,7 @@
 package employee_management_app.dto.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapping;
 
 import employee_management_app.dto.schedule.ScheduleDTO;
@@ -15,4 +17,6 @@ public interface ScheduleMapper {
 	@Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "employee.id", source = "employeeId")
     Schedule toEntity(ScheduleDTO scheduleDTO);
+	
+	List<ScheduleDTO> toDtoList(List<Schedule> schedules);
 }

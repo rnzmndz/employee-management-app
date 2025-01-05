@@ -2,9 +2,9 @@ package employee_management_app.model;
 
 import java.beans.Transient;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -47,7 +47,7 @@ public class Schedule {
 	private Employee employee;
 	
 	@Column(name = "date", nullable = false)
-	private Date date;
+	private LocalDate date;
 	
 	@Column(name = "shift_start_time", nullable = false)
 	private LocalTime shiftStartTime;
