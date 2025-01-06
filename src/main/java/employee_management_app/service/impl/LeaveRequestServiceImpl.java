@@ -66,7 +66,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService{
 				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
 		
 //		Get all the attendance between those dates
-		Page<LeaveRequest> leaveRequests = leaveRequestRepository.findByEmployee(employee);
+		Page<LeaveRequest> leaveRequests = leaveRequestRepository.findByEmployee(employee, pageable);
 		
 //		Convert the Leave Request entity into 
 		List<LeaveRequestDTO> leaveRequestDTOs = leaveRequestMapper.toDtoList(leaveRequests.getContent());

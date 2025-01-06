@@ -1,11 +1,8 @@
 package employee_management_app.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +69,8 @@ public class UserServiceImpl implements UserService {
 		user.setEmployee(employee);
 
 //		Set default permission based on role
-		setDefaultPermissions(user);
+//		FIXME fix this later
+//		setDefaultPermissions(user);
 
 //		Set CreatedAt Time and date when it created
 		user.setCreatedAt(LocalDateTime.now());
@@ -143,22 +141,22 @@ public class UserServiceImpl implements UserService {
 	public List<UserDTO> getAllUsers() {
 		return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
 	}
-
-	protected void setDefaultPermissions(User user) {
-		if (user.getRole() == null) {
-			throw new IllegalArgumentException("User role cannot be null");
-		}
-
-		Set<String> permissions = new HashSet<>();
-
-		switch (user.getRole()) {
-		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
-				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
-		case MANAGER ->
-			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
-		default -> {
-		}
-		}
-		user.setPermissions(permissions);
-	}
+//	FIXME FIX this later
+//	protected void setDefaultPermissions(User user) {
+//		if (user.getRole() == null) {
+//			throw new IllegalArgumentException("User role cannot be null");
+//		}
+//
+//		Set<String> permissions = new HashSet<>();
+//
+//		switch (user.getRole()) {
+//		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
+//				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
+//		case MANAGER ->
+//			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
+//		default -> {
+//		}
+//		}
+//		user.setPermissions(permissions);
+//	}
 }

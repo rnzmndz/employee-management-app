@@ -160,7 +160,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public Page<EmployeeListDTO> findByDepartment(String departmentName, Pageable pageable) {
 //		Find employees by Department Name
-		Page<Employee> employees = employeeRepository.findByDepartment(departmentName, pageable);
+		Page<Employee> employees = employeeRepository.findByDepartment_Name(departmentName, pageable);
 		
 //		Convert the Employee pageable data into EmployeeListDTO
 		List<EmployeeListDTO> employeeListDTOs = listMapper.toDtoList(employees.getContent());
@@ -254,7 +254,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 				.orElseThrow(() -> new ResourceNotFoundException("Department does not exist with ID: " + departmentId));
 		
 //		Find the employees
-		List<Employee> employeesByDepartment = employeeRepository.findByDepartment(department.getName());
+		List<Employee> employeesByDepartment = employeeRepository.findByDepartment_Name(department.getName());
 		
 		List<Employee> employeesByDeptAndPosition = employeesByDepartment.stream()
 				.filter(employee -> employee.getPosition() == position)

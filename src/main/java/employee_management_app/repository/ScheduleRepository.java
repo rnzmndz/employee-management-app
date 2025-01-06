@@ -1,12 +1,15 @@
 package employee_management_app.repository;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import employee_management_app.model.Employee;
 import employee_management_app.model.Schedule;
 
+@Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long>{
 
-	Page<Schedule> findByEmployee(Employee employee);
+	List<Schedule> findByEmployee(Employee employee);
 }

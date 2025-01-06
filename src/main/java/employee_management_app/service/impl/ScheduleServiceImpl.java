@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 
 import employee_management_app.dto.mapper.ScheduleMapper;
 import employee_management_app.dto.schedule.ScheduleDTO;
@@ -65,11 +64,11 @@ public class ScheduleServiceImpl implements ScheduleService{
 				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
 
 //		Find all Schedule for specifice employee
-		Page<Schedule> schedules = scheduleRepository.findByEmployee(employee);
+		List<Schedule> schedules = scheduleRepository.findByEmployee(employee);
 		
 //		Filter and convert the list into ScheduleDTO
 		return scheduleMapper.toDtoList(
-				schedules.getContent().stream()
+				schedules.stream()
 				.filter(schedule -> schedule.getDate().isAfter(startDate))
 				.filter(schedule -> schedule.getDate().isBefore(endDate))
 				.collect(Collectors.toList()));

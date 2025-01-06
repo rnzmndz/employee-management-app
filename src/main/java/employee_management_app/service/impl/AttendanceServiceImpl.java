@@ -1,6 +1,6 @@
 package employee_management_app.service.impl;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 	}
 
 	@Override
-	public Page<AttendanceDTO> getAttendanceByDateRange(Long employeeId, LocalDateTime startDate, LocalDateTime endDate,
+	public Page<AttendanceDTO> getAttendanceByDateRange(Long employeeId, LocalDate startDate, LocalDate endDate,
 			Pageable pageable) {
 		
 //		startDate should be earlier than endDate
@@ -47,7 +47,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 		}
 		
 //		Get all the attendance between those dates
-		Page<Attendance> attendances = attendanceRepository.findByDateRange(startDate, endDate);
+		Page<Attendance> attendances = attendanceRepository.findByDateRange(startDate, endDate, pageable);
 		
 //		Filter the attendance
 		List<Attendance> filteredAttendance = attendances.getContent().stream()
@@ -62,7 +62,7 @@ public class AttendanceServiceImpl implements AttendanceService{
 	}
 
 	@Override
-	public Map<String, Object> getAttendanceStatistics(LocalDateTime startDate, LocalDateTime endDate) {
+	public Map<String, Object> getAttendanceStatistics(LocalDate startDate, LocalDate endDate) {
 		// TODO Do the getAttendanceStatistics method
 		return null;
 	}

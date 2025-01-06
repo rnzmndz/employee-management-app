@@ -1,22 +1,15 @@
 package employee_management_app.model;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import employee_management_app.model.enums.UserRole;
 import employee_management_app.model.enums.UserStatus;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -94,20 +87,20 @@ public class User {
     @Column(name = "status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
     
-    @ElementCollection
-    @CollectionTable(
-    		name = "user_permission",
-    		joinColumns = @JoinColumn(name = "user_id")
-    )
-    @Column(name = "permission")
-    private Set<String> permissions = new HashSet<>();
-    
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-    	Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
-        permissions.forEach(permission -> 
-            authorities.add(new SimpleGrantedAuthority(permission))
-        );
-        return authorities;
-	}
+//    @ElementCollection
+//    @CollectionTable(
+//    		name = "user_permission",
+//    		joinColumns = @JoinColumn(name = "user_id")
+//    )
+//    @Column(name = "permission")
+//    private Set<String> permissions = new HashSet<>();
+//    
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//    	Set<GrantedAuthority> authorities = new HashSet<>();
+//        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+//        permissions.forEach(permission -> 
+//            authorities.add(new SimpleGrantedAuthority(permission))
+//        );
+//        return authorities;
+//	}
 }

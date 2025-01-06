@@ -1,6 +1,6 @@
 package employee_management_app.service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -30,8 +30,8 @@ public interface AttendanceService {
 	  * @return Page of AttendanceDTO for the specified period
 	  * @throws ResourceNotFoundException if employee not found
 	  */
-	 Page<AttendanceDTO> getAttendanceByDateRange(Long employeeId, LocalDateTime startDate, 
-	         LocalDateTime endDate, Pageable pageable);
+	 Page<AttendanceDTO> getAttendanceByDateRange(Long employeeId, LocalDate startDate, 
+	         LocalDate endDate, Pageable pageable);
 	
 	 /**
 	  * Generates attendance statistics for a given time period.
@@ -40,6 +40,6 @@ public interface AttendanceService {
 	  * @param endDate End of the analysis period
 	  * @return Map containing various attendance metrics
 	  */
-	 Map<String, Object> getAttendanceStatistics(LocalDateTime startDate, LocalDateTime endDate);
+	 Map<String, Object> getAttendanceStatistics(LocalDate startDate, LocalDate endDate);
 	 
 	 }
