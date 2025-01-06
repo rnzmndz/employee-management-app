@@ -1,6 +1,5 @@
 package employee_management_app.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,14 +26,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import employee_management_app.dto.attendance.AttendanceDTO;
 import employee_management_app.dto.employee.EmployeeCreateDTO;
 import employee_management_app.dto.employee.EmployeeDTO;
 import employee_management_app.dto.employee.EmployeeDetailDTO;
 import employee_management_app.dto.employee.EmployeeListDTO;
 import employee_management_app.dto.employee.EmployeeUpdateDTO;
-import employee_management_app.dto.leaverequest.LeaveRequestDTO;
-import employee_management_app.dto.schedule.ScheduleDTO;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
@@ -47,9 +42,6 @@ class EmployeeServiceTest {
     private EmployeeUpdateDTO updateEmployeeDTO;
     private EmployeeDTO employeeDTO;
     private EmployeeDetailDTO employeeDetailDTO;
-    private AttendanceDTO attendanceDTO;
-    private LeaveRequestDTO leaveRequestDTO;
-    private ScheduleDTO scheduleDTO;
     private Pageable pageable;
 
     @BeforeEach
@@ -59,9 +51,6 @@ class EmployeeServiceTest {
         updateEmployeeDTO = new EmployeeUpdateDTO();
         employeeDTO = new EmployeeDTO();
         employeeDetailDTO = new EmployeeDetailDTO();
-        attendanceDTO = new AttendanceDTO();
-        leaveRequestDTO = new LeaveRequestDTO();
-        scheduleDTO = new ScheduleDTO();
         pageable = PageRequest.of(0, 10);
     }
 
@@ -145,36 +134,6 @@ class EmployeeServiceTest {
 
         assertNotNull(result);
         verify(employeeService).transferDepartment(1L, 2L);
-    }
-
-    @Test
-    void recordAttendance_Success() {
-        doNothing().when(employeeService).recordAttendance(anyLong(), any(AttendanceDTO.class));
-
-        assertDoesNotThrow(() -> employeeService.recordAttendance(1L, attendanceDTO));
-        verify(employeeService).recordAttendance(1L, attendanceDTO);
-    }
-
-    @Test
-    void submitLeaveRequest_Success() {
-        when(employeeService.submitLeaveRequest(anyLong(), any(LeaveRequestDTO.class)))
-            .thenReturn(leaveRequestDTO);
-
-        LeaveRequestDTO result = employeeService.submitLeaveRequest(1L, leaveRequestDTO);
-
-        assertNotNull(result);
-        verify(employeeService).submitLeaveRequest(1L, leaveRequestDTO);
-    }
-
-    @Test
-    void assignSchedule_Success() {
-        when(employeeService.assignSchedule(anyLong(), any(ScheduleDTO.class)))
-            .thenReturn(scheduleDTO);
-
-        ScheduleDTO result = employeeService.assignSchedule(1L, scheduleDTO);
-
-        assertNotNull(result);
-        verify(employeeService).assignSchedule(1L, scheduleDTO);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package employee_management_app.service.impl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -13,35 +12,23 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import employee_management_app.dto.attendance.AttendanceDTO;
 import employee_management_app.dto.employee.EmployeeCreateDTO;
 import employee_management_app.dto.employee.EmployeeDTO;
 import employee_management_app.dto.employee.EmployeeDetailDTO;
 import employee_management_app.dto.employee.EmployeeListDTO;
 import employee_management_app.dto.employee.EmployeeUpdateDTO;
-import employee_management_app.dto.leaverequest.LeaveRequestDTO;
-import employee_management_app.dto.mapper.AttendanceMapper;
 import employee_management_app.dto.mapper.EntityUpdater;
-import employee_management_app.dto.mapper.LeaveRequestMapper;
-import employee_management_app.dto.mapper.ScheduleMapper;
 import employee_management_app.dto.mapper.employee.EmployeeCreateMapper;
 import employee_management_app.dto.mapper.employee.EmployeeDetailMapper;
 import employee_management_app.dto.mapper.employee.EmployeeListMapper;
 import employee_management_app.dto.mapper.employee.EmployeeMapper;
 import employee_management_app.dto.mapper.employee.EmployeeUpdateMapper;
-import employee_management_app.dto.schedule.ScheduleDTO;
 import employee_management_app.exception.ResourceNotFoundException;
-import employee_management_app.model.Attendance;
 import employee_management_app.model.Department;
 import employee_management_app.model.Employee;
-import employee_management_app.model.LeaveRequest;
-import employee_management_app.model.Schedule;
 import employee_management_app.model.enums.EmployeeStatus;
-import employee_management_app.repository.AttendanceRepository;
 import employee_management_app.repository.DepartmentRepository;
 import employee_management_app.repository.EmployeeRepository;
-import employee_management_app.repository.LeaveRequestRepository;
-import employee_management_app.repository.ScheduleRepository;
 import employee_management_app.service.EmployeeService;
 import jakarta.transaction.Transactional;
 
@@ -56,15 +43,6 @@ public class EmployeeServiceImpl implements EmployeeService{
 	private DepartmentRepository departmentRepository;
 	
 	@Autowired
-	private AttendanceRepository attendanceRepository;
-	
-	@Autowired
-	private LeaveRequestRepository leaveRequestRepository;
-	
-	@Autowired
-	private ScheduleRepository scheduleRepository;
-	
-	@Autowired
 	private EmployeeMapper employeeMapper;
 	@Autowired
 	private EmployeeCreateMapper createMapper;
@@ -74,15 +52,6 @@ public class EmployeeServiceImpl implements EmployeeService{
 	private EmployeeDetailMapper detailMapper;
 	@Autowired
 	private EmployeeListMapper listMapper;
-	
-	@Autowired
-	private AttendanceMapper attendanceMapper;
-	
-	@Autowired
-	private LeaveRequestMapper leaveRequestMapper;
-	
-	@Autowired
-	private ScheduleMapper scheduleMapper;
 	
 	@Override
 	public EmployeeDTO createEmployee(EmployeeCreateDTO createEmployeeDTO) {
@@ -292,154 +261,6 @@ public class EmployeeServiceImpl implements EmployeeService{
 				.collect(Collectors.toList());
 		
 		return listMapper.toDtoList(employeesByDeptAndPosition);
-	}
-
-	@Override
-	public void recordAttendance(Long employeeId, AttendanceDTO attendanceDTO) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-
-//		Convert attendanceDTO to attendance entity
-		Attendance attendance = attendanceMapper.toEntity(attendanceDTO);
-		
-//		Check if attendance employeeId is equals to our employeeId
-		if (employee.getId() != attendance.getEmployee().getId()) {
-			attendance.setEmployee(employee);
-		}
-		
-//		Save the attendance in database
-		attendanceRepository.save(attendance);
-	}
-
-	@Override
-	public Page<AttendanceDTO> getEmployeeAttendance(Long employeeId, LocalDateTime startDate, LocalDateTime endDate,
-			Pageable pageable) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-
-//		startDate should be earlier than endDate
-		if (startDate.isAfter(endDate)) {
-			throw new IllegalArgumentException("Start Date Should be before the End Date");
-		}
-		
-//		Get all the attendance between those dates
-		Page<Attendance> attendances = attendanceRepository.findByDateRange(startDate, endDate);
-		
-//		Filter the attendance
-		List<Attendance> filteredAttendance = attendances.getContent().stream()
-				.filter(attendance -> attendance.getEmployee().getId() == employeeId)
-				.collect(Collectors.toList());
-			
-//		Convert the Attendance List into AttendanceDTO List
-		List<AttendanceDTO> attendanceDTOs = attendanceMapper.toList(filteredAttendance);
-		
-		return new PageImpl<>(attendanceDTOs, pageable, attendances.getTotalElements());
-	}
-
-	@Override
-	public LeaveRequestDTO submitLeaveRequest(Long employeeId, LeaveRequestDTO leaveRequestDTO) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-
-//		Convert LeaveRequestDTO into LeaveRequest entity
-		LeaveRequest leaveRequest = leaveRequestMapper.toEntity(leaveRequestDTO);
-		
-//		Check if attendance employeeId is equals to our employeeId
-		if (employee.getId() != leaveRequest.getEmployee().getId()) {
-			leaveRequest.setEmployee(employee);
-		}
-		
-//		Save the attendance in database
-		leaveRequestRepository.save(leaveRequest);
-		
-		return leaveRequestMapper.toDTO(leaveRequest);
-	}
-
-//	FIXME Review and change
-	@Override
-	public Page<LeaveRequestDTO> getEmployeeLeaveRequests(Long employeeId, Pageable pageable) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-		
-//		Get all the attendance between those dates
-		Page<LeaveRequest> leaveRequests = leaveRequestRepository.findByEmployee(employee);
-		
-//		Convert the Leave Request entity into 
-		List<LeaveRequestDTO> leaveRequestDTOs = leaveRequestMapper.toDtoList(leaveRequests.getContent());
-		
-		return new PageImpl<>(leaveRequestDTOs, pageable, leaveRequests.getTotalElements());
-	
-	}
-
-	@Override
-	public ScheduleDTO assignSchedule(Long employeeId, ScheduleDTO scheduleDTO) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-		
-//		Convert ScheduleDTO into Schedule entity
-		Schedule schedule = scheduleMapper.toEntity(scheduleDTO);
-		
-//		Check if the assigned schedule is same as the employee ID
-		if(employee.getId() != schedule.getEmployee().getId()) {
-			schedule.setEmployee(employee);
-		}
-		
-//		Save the schedule
-		scheduleRepository.save(schedule);
-		
-		return scheduleMapper.toDTO(schedule);
-}
-
-	@Override
-	public List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDate startDate, LocalDate endDate) {
-//		The paramaters should be valid and not null
-		if(employeeId == null || employeeId < 0) {
-			throw new IllegalArgumentException("ID must be valid and not null");
-		}
-		
-//		Find the Employee in the database
-		Employee employee = employeeRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + employeeId));
-
-//		Find all Schedule for specifice employee
-		Page<Schedule> schedules = scheduleRepository.findByEmployee(employee);
-		
-//		Filter and convert the list into ScheduleDTO
-		return scheduleMapper.toDtoList(
-				schedules.getContent().stream()
-				.filter(schedule -> schedule.getDate().isAfter(startDate))
-				.filter(schedule -> schedule.getDate().isBefore(endDate))
-				.collect(Collectors.toList()));
 	}
 
 	@Override

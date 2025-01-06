@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 import employee_management_app.dto.user.UserCreateDTO;
 import employee_management_app.model.User;
+import employee_management_app.model.enums.UserStatus;
 
 class UserCreateMapperTest {
 
@@ -32,7 +33,7 @@ class UserCreateMapperTest {
         assertEquals(42L, user.getEmployee().getId(), "Employee ID should match the source DTO");
         assertNull(user.getCreatedAt(), "CreatedAt should be ignored and null");
         assertNull(user.getUpdatedAt(), "UpdatedAt should be ignored and null");
-//        assertEquals("ACTIVE", user.getStatus(), "Status should be set to ACTIVE");
+        assertEquals(UserStatus.ACTIVE, user.getStatus(), "Status should be set to ACTIVE");
         assertTrue(user.isAccountNonLocked(), "AccountNonLocked should be true");
         assertEquals(0, user.getFailedAttempt(), "FailedAttempt should be 0");
     }

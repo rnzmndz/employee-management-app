@@ -13,6 +13,7 @@ public interface UserCreateMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "employee.id", source = "employeeId")
+	@Mapping(target = "accountNonLocked", constant = "true")
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	@Mapping(target = "status", expression = "java(employee_management_app.model.enums.UserStatus.ACTIVE)")

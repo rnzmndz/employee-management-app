@@ -8,7 +8,7 @@ import employee_management_app.dto.schedule.ScheduleDTO;
 import employee_management_app.model.Schedule;
 
 public interface ScheduleMapper {
-// TODO create ScheduleMapper
+	
 	@Mapping(target = "employee", ignore = true)
     ScheduleDTO toDTO(Schedule schedule);
     

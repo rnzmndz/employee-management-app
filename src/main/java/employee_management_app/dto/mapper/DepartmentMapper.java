@@ -8,8 +8,6 @@ import employee_management_app.model.Department;
 
 @Mapper(componentModel = "spring")
 public interface DepartmentMapper {
-
-//	TODO create DepartmentMapper
 	DepartmentDTO toDTO(Department department);
 	
 	@Mapping(target = "id", ignore = true)

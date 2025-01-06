@@ -1,6 +1,5 @@
 package employee_management_app.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -8,14 +7,12 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import employee_management_app.dto.attendance.AttendanceDTO;
 import employee_management_app.dto.employee.EmployeeCreateDTO;
 import employee_management_app.dto.employee.EmployeeDTO;
 import employee_management_app.dto.employee.EmployeeDetailDTO;
 import employee_management_app.dto.employee.EmployeeListDTO;
 import employee_management_app.dto.employee.EmployeeUpdateDTO;
-import employee_management_app.dto.leaverequest.LeaveRequestDTO;
-import employee_management_app.dto.schedule.ScheduleDTO;
+import employee_management_app.exception.ResourceNotFoundException;
 import employee_management_app.model.enums.EmployeeStatus;
 
 public interface EmployeeService {
@@ -131,71 +128,7 @@ public interface EmployeeService {
      * @return List of EmployeeListDTO matching the criteria
      */
     List<EmployeeListDTO> findEmployeesByDepartmentAndPosition(Long departmentId, String position);
-
-    /**
-     * Records attendance for an employee.
-     *
-     * @param employeeId Employee ID to record attendance for
-     * @param attendanceDTO Attendance information to record
-     * @throws ResourceNotFoundException if employee not found
-     * @throws IllegalArgumentException if attendance data is invalid
-     */
-    void recordAttendance(Long employeeId, AttendanceDTO attendanceDTO);
-
-    /**
-     * Retrieves attendance records for an employee within a date range.
-     *
-     * @param employeeId Employee ID to get attendance for
-     * @param startDate Start of the date range
-     * @param endDate End of the date range
-     * @param pageable Pagination information
-     * @return Page of AttendanceDTO for the specified period
-     */
-    Page<AttendanceDTO> getEmployeeAttendance(Long employeeId, LocalDateTime startDate, 
-            LocalDateTime endDate, Pageable pageable);
-
-    /**
-     * Submits a leave request for an employee.
-     *
-     * @param employeeId Employee ID requesting leave
-     * @param leaveRequestDTO Leave request information
-     * @return LeaveRequestDTO containing the submitted request
-     * @throws ResourceNotFoundException if employee not found
-     * @throws IllegalArgumentException if request is invalid
-     */
-    LeaveRequestDTO submitLeaveRequest(Long employeeId, LeaveRequestDTO leaveRequestDTO);
-
-    /**
-     * Retrieves leave requests for an employee.
-     *
-     * @param employeeId Employee ID to get requests for
-     * @param pageable Pagination information
-     * @return Page of LeaveRequestDTO for the employee
-     */
-    Page<LeaveRequestDTO> getEmployeeLeaveRequests(Long employeeId, Pageable pageable);
-
-    /**
-     * Assigns a schedule to an employee.
-     *
-     * @param employeeId Employee ID to assign schedule to
-     * @param scheduleDTO Schedule information to assign
-     * @return ScheduleDTO containing the assigned schedule
-     * @throws ResourceNotFoundException if employee not found
-     * @throws IllegalArgumentException if schedule is invalid
-     */
-    ScheduleDTO assignSchedule(Long employeeId, ScheduleDTO scheduleDTO);
-
-    /**
-     * Retrieves schedules for an employee within a date range.
-     *
-     * @param employeeId Employee ID to get schedules for
-     * @param startDate Start of the date range
-     * @param endDate End of the date range
-     * @return List of ScheduleDTO for the specified period
-     */
-    List<ScheduleDTO> getEmployeeSchedules(Long employeeId, LocalDate startDate, 
-            LocalDate endDate);
-
+    
     /**
      * Checks if an email address is already registered to an employee.
      *
