@@ -76,4 +76,21 @@ public class Schedule {
     public Duration getShiftDuration() {
         return Duration.between(shiftStartTime, shiftEndTime);
     }
+    @AssertTrue(message = "Schedule overlaps with existing schedule")
+    private boolean isNotOverlapping() {
+        if (employee == null || date == null || shiftStartTime == null || shiftEndTime == null) {
+            return true;
+        }
+        
+        return employee.getSchedules().stream()
+                .filter(schedule -> !schedule.equals(this)) // Exclude current schedule when updating
+                .filter(schedule -> schedule.getDate().equals(this.date))
+                .noneMatch(schedule -> {
+                    LocalTime existingStart = schedule.getShiftStartTime();
+                    LocalTime existingEnd = schedule.getShiftEndTime();
+                    
+                    return !(shiftEndTime.isBefore(existingStart) || 
+                            shiftStartTime.isAfter(existingEnd));
+                });
+    }
 }

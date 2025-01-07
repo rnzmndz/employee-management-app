@@ -20,18 +20,16 @@ public class AttendanceRepositoryTest {
 
     @Test
     void findByDateRange_ShouldReturnAttendanceWithinRange() {
-        // Given
-        LocalDate startDate = LocalDate.now().minusDays(7);
-        LocalDate endDate = LocalDate.now();
-        Attendance attendance1 = new Attendance();
-        attendance1.setDate(LocalDate.now().minusDays(5));
-        attendanceRepository.save(attendance1);
-
+    	// Given
+    	LocalDate startDate = LocalDate.now().minusDays(2);
+    	LocalDate endDate = LocalDate.now().plusDays(2);
+    	
         // When
         Page<Attendance> found = attendanceRepository.findByDateRange(startDate, endDate, PageRequest.of(0, 10));
 
         // Then
         assertThat(found).isNotEmpty();
+        assertThat(found.getContent().size()).isEqualTo(3);
         assertThat(found.getContent().get(0).getDate()).isAfter(startDate);
         assertThat(found.getContent().get(0).getDate()).isBefore(endDate);
     }

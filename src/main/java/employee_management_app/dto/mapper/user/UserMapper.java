@@ -7,15 +7,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import employee_management_app.dto.user.UserDTO;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
 	@Mapping(target = "employeeId", source = "employee.id")
-	UserDTO toDto(User user);
+	UserDTO toDto(AppUser user);
 	
-	User toEntity(UserDTO userDTO);
+	AppUser toEntity(UserDTO userDTO);
 	
-	List<UserDTO> toDTOList(List<User> users);
+	List<UserDTO> toDTOList(List<AppUser> users);
 }

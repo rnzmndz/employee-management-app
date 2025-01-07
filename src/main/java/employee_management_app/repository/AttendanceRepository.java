@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import employee_management_app.model.Attendance;
 
 @Repository
-public interface AttendanceRepository extends JpaRepository<Attendance, Long>{
+public interface AttendanceRepository extends  JpaRepository<Attendance, Long> {
 
 	@Query("SELECT a FROM Attendance a WHERE a.date BETWEEN :startDate AND :endDate")
 	Page<Attendance> findByDateRange(

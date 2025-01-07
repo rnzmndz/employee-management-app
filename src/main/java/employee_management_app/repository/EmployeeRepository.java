@@ -11,7 +11,7 @@ import employee_management_app.model.Employee;
 import employee_management_app.model.enums.EmployeeStatus;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long>{
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
 	Page<Employee> findAll(Pageable pageable);
 	

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import employee_management_app.dto.user.UserCredentialsDTO;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
 class UserCredentialsMapperTest {
 
@@ -22,7 +22,7 @@ class UserCredentialsMapperTest {
         userCredentialsDTO.setPassword("password123");
 
         // Act
-        User user = mapper.toEntity(userCredentialsDTO);
+        AppUser user = mapper.toEntity(userCredentialsDTO);
 
         // Assert
         assertNotNull(user, "User should not be null");

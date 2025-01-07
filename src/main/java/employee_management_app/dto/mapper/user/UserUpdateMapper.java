@@ -6,7 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
 import employee_management_app.dto.user.UserUpdateDTO;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserUpdateMapper {
@@ -15,5 +15,5 @@ public interface UserUpdateMapper {
 	@Mapping(target = "password", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "employee.id", source = "employeeId")
-	void updateEntityFromDto(UserUpdateDTO updateDTO, @MappingTarget User user);
+	void updateEntityFromDto(UserUpdateDTO updateDTO, @MappingTarget AppUser user);
 }

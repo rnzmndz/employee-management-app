@@ -102,4 +102,9 @@ public class LeaveRequest {
 	                    && date.getDayOfWeek() != DayOfWeek.SUNDAY)
 	                .count();
 	    }
+	 
+	 @AssertTrue(message = "Employees cannot approve their own leave requests")
+	 private boolean isNotSelfApproved() {
+	     return approvedBy == null || !approvedBy.equals(employee);
+	 }
 }

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserSecurityService;
 import jakarta.transaction.Transactional;
@@ -26,7 +26,7 @@ public class UserSecurityServiceImpl implements UserSecurityService{
 	private PasswordEncoder passwordEncoder;
 
 	@Override
-	public void incrementFailedAttempts(User user) {
+	public void incrementFailedAttempts(AppUser user) {
 		user.setFailedAttempt(user.getFailedAttempt() + 1);
 		if (user.getFailedAttempt() >= MAX_FAILED_ATTEMPTS) {
 			lockUser(user);
@@ -35,14 +35,14 @@ public class UserSecurityServiceImpl implements UserSecurityService{
 	}
 
 	@Override
-	public void lockUser(User user) {
+	public void lockUser(AppUser user) {
 		user.setAccountNonLocked(false);
 		user.setLockTime(LocalDateTime.now());
 		userRepository.save(user);
 	}
 
 	@Override
-	public boolean unlockWhenTimeExpired(User user) {
+	public boolean unlockWhenTimeExpired(AppUser user) {
 		if (user.getLockTime() != null) {
 			LocalDateTime lockTime = user.getLockTime();
 			LocalDateTime unlockTime = lockTime.plusHours(LOCK_TIME_DURATION);
@@ -59,20 +59,20 @@ public class UserSecurityServiceImpl implements UserSecurityService{
 	}
 
 	@Override
-	public void resetFailedAttempts(User user) {
+	public void resetFailedAttempts(AppUser user) {
 		user.setFailedAttempt(0);
 		userRepository.save(user);
 		
 	}
 
 	@Override
-	public void updateLastLogin(User user) {
+	public void updateLastLogin(AppUser user) {
 		user.setLastLogin(LocalDateTime.now());
 		userRepository.save(user);
 	}
 
 	@Override
-	public String generatePasswordResetToken(User user) {
+	public String generatePasswordResetToken(AppUser user) {
 		String token = UUID.randomUUID().toString();
 		user.setPassword(token);
 		user.setResetTokenExpiry(LocalDateTime.now().plusHours(24));
@@ -81,7 +81,7 @@ public class UserSecurityServiceImpl implements UserSecurityService{
 	}
 
 	@Override
-	public void changePassword(User user, String newPassword) {
+	public void changePassword(AppUser user, String newPassword) {
 		user.setPassword(passwordEncoder.encode(newPassword));
 		user.setPasswordResetToken(null);
 		user.setResetTokenExpiry(null);

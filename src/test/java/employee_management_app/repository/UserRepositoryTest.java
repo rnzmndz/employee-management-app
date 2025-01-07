@@ -6,40 +6,30 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
-@DataJpaTest
+@SpringBootTest
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
+    
     @Test
     void findByUserName_ShouldReturnUser() {
-        // Given
-        User user = new User();
-        user.setUserName("testuser");
-        userRepository.save(user);
-
         // When
-        Optional<User> found = userRepository.findByUserName("testuser");
+        Optional<AppUser> found = userRepository.findByUserName("john.doe");
 
         // Then
         assertThat(found).isPresent();
-        assertThat(found.get().getUserName()).isEqualTo("testuser");
+        assertThat(found.get().getUserName()).isEqualTo("john.doe");
     }
 
     @Test
     void existsByUserName_ShouldReturnTrue() {
-        // Given
-        User user = new User();
-        user.setUserName("testuser");
-        userRepository.save(user);
-
         // When
-        boolean exists = userRepository.existsByUserName("testuser");
+        boolean exists = userRepository.existsByUserName("john.doe");
 
         // Then
         assertThat(exists).isTrue();

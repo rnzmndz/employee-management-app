@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.model.Employee;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
 class UserUpdateMapperTest {
 
@@ -23,7 +23,7 @@ class UserUpdateMapperTest {
         updateDTO.setEmployeeId(42L);
         updateDTO.setUserName("updatedUser");
 
-        User user = new User();
+        AppUser user = new AppUser();
         user.setId(1L);
         user.setPassword("originalPassword");
         user.setCreatedAt(LocalDateTime.now());

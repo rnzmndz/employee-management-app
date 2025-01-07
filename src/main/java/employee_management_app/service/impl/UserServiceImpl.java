@@ -17,7 +17,7 @@ import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.exception.UserNotFoundException;
 import employee_management_app.exception.UsernameAlreadyExistsException;
 import employee_management_app.model.Employee;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserService;
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new EntityNotFoundException("Employee not found"));
 
 //		Create user
-		User user = createMapper.toEntity(dto);
+		AppUser user = createMapper.toEntity(dto);
 		user.setEmployee(employee);
 
 //		Set default permission based on role
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("The username input is empty or null");
 		}
 
-		Optional<User> user = userRepository.findById(id);
+		Optional<AppUser> user = userRepository.findById(id);
 		if (user.isEmpty()) {
 			return Optional.empty();
 		}
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("Updated user cannot be null");
 		}
 //		find the user, verify if it is existing.
-		User existingUser = userRepository.findById(id)
+		AppUser existingUser = userRepository.findById(id)
 				.orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 //		Map only non-null fields from updatedUSer to existingUser
 		if (updatedUser.getUserName() != null) {

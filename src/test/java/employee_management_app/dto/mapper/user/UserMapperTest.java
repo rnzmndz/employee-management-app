@@ -13,7 +13,7 @@ import org.mapstruct.factory.Mappers;
 
 import employee_management_app.dto.user.UserDTO;
 import employee_management_app.model.Employee;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 
 class UserMapperTest {
 
@@ -22,7 +22,7 @@ class UserMapperTest {
     @Test
     public void testToDto() {
         // Arrange
-        User user = new User();
+        AppUser user = new AppUser();
         user.setId(1L);
         Employee employee = new Employee();
         employee.setId(42L);
@@ -41,21 +41,21 @@ class UserMapperTest {
     @Test
     public void testToDTOList() {
         // Arrange
-        User user1 = new User();
+        AppUser user1 = new AppUser();
         user1.setId(1L);
         Employee employee1 = new Employee();
         employee1.setId(42L);
         user1.setEmployee(employee1);
         user1.setUserName("user1");
 
-        User user2 = new User();
+        AppUser user2 = new AppUser();
         user2.setId(2L);
         Employee employee2 = new Employee();
         employee2.setId(43L);
         user2.setEmployee(employee2);
         user2.setUserName("user2");
 
-        List<User> users = List.of(user1, user2);
+        List<AppUser> users = List.of(user1, user2);
 
         // Act
         List<UserDTO> userDTOs = mapper.toDTOList(users);
@@ -75,7 +75,7 @@ class UserMapperTest {
     
     @Test
     public void testToDtoWithNullEmployee() {
-        User user = new User();
+        AppUser user = new AppUser();
         user.setId(1L);
         user.setEmployee(null);
         user.setUserName("testuser");
@@ -95,7 +95,7 @@ class UserMapperTest {
     @Test
     public void testUnmappedFieldsAreIgnored() {
         // Arrange
-        User user = new User();
+        AppUser user = new AppUser();
         user.setId(1L);
         user.setEmployee(new Employee());
         user.setUserName("testuser");
@@ -112,7 +112,7 @@ class UserMapperTest {
     @Test
     public void testNestedNullHandling() {
         // Arrange
-        User user = new User();
+        AppUser user = new AppUser();
         user.setId(1L);
         Employee employee = new Employee();
         // Don't set employee.id
@@ -130,7 +130,7 @@ class UserMapperTest {
     @Test
     public void testEmptyList() {
         // Arrange
-        List<User> emptyList = Collections.emptyList();
+        List<AppUser> emptyList = Collections.emptyList();
         
         // Act
         List<UserDTO> userDTOs = mapper.toDTOList(emptyList);

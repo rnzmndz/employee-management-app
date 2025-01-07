@@ -32,7 +32,7 @@ import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.exception.UserNotFoundException;
 import employee_management_app.exception.UsernameAlreadyExistsException;
 import employee_management_app.model.Employee;
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 import employee_management_app.model.enums.UserRole;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.UserRepository;
@@ -61,7 +61,7 @@ class UserServiceImplTest {
 
     private UserCreateDTO createDTO;
     private UserUpdateDTO updateDTO;
-    private User user;
+    private AppUser user;
     private UserDTO userDTO;
     private Employee employee;
 
@@ -77,7 +77,7 @@ class UserServiceImplTest {
         employee = new Employee();
         employee.setId(1L);
 
-        user = new User();
+        user = new AppUser();
         user.setId(1L);
         user.setUserName("testUser");
         user.setEmployee(employee);
@@ -92,7 +92,7 @@ class UserServiceImplTest {
         when(userRepository.existsByUserName(anyString())).thenReturn(false);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
         when(createMapper.toEntity(any(UserCreateDTO.class))).thenReturn(user);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
         
         user.setRole(UserRole.ADMIN);
 
@@ -100,7 +100,7 @@ class UserServiceImplTest {
 
         assertNotNull(result);
         assertEquals(createDTO.getUserName(), result.getUserName());
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).save(any(AppUser.class));
     }
 
     @Test
@@ -134,7 +134,7 @@ class UserServiceImplTest {
     @Test
     void findByUsername_Success() {
         when(userRepository.findByUserName(anyString())).thenReturn(Optional.of(user));
-        when(userMapper.toDto(any(User.class))).thenReturn(userDTO);
+        when(userMapper.toDto(any(AppUser.class))).thenReturn(userDTO);
 
         Optional<UserDTO> result = userService.findByUsername("testUser");
 
@@ -154,12 +154,12 @@ class UserServiceImplTest {
     @Test
     void updateUser_Success() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         UserUpdateDTO result = userService.updateUser(1L, updateDTO);
 
         assertNotNull(result);
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).save(any(AppUser.class));
     }
 
     @Test
@@ -202,9 +202,9 @@ class UserServiceImplTest {
 
     @Test
     void getAllUsers_Success() {
-        List<User> users = Arrays.asList(user);
+        List<AppUser> users = Arrays.asList(user);
         when(userRepository.findAll()).thenReturn(users);
-        when(userMapper.toDto(any(User.class))).thenReturn(userDTO);
+        when(userMapper.toDto(any(AppUser.class))).thenReturn(userDTO);
 
         List<UserDTO> result = userService.getAllUsers();
 

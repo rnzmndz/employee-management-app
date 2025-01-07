@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserSecurityService;
 
@@ -37,7 +37,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String username = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		
-		User user = userRepository.findByUserName(username)
+		AppUser user = userRepository.findByUserName(username)
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		
 		if (!user.isAccountNonLocked()) {
@@ -52,7 +52,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		return authenticateUser(user, password);
 	}
 
-	private Authentication authenticateUser(User user, String password) {
+	private Authentication authenticateUser(AppUser user, String password) {
         if (passwordEncoder.matches(password, user.getPassword())) {
             userSecurityService.resetFailedAttempts(user);
             userSecurityService.updateLastLogin(user);

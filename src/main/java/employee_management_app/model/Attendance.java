@@ -29,10 +29,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "attendance", indexes = {
-		@Index(name = "idx_attendance_employee", columnList = "employee_id"),
-		@Index(name = "idx_attendance_date", columnList = "date")
-})
+@Table(name = "attendance", 
+indexes = {
+    @Index(name = "idx_attendance_employee_date", 
+           columnList = "employee_id, date", 
+           unique = true)
+}
+)
 @Entity
 @EqualsAndHashCode(of = "id")
 public class Attendance {
@@ -64,7 +67,17 @@ public class Attendance {
     }
 	
 	@Transient
-    public Duration getWorkDuration() {
-        return Duration.between(timeIn, timeOut);
-    }
+	public Duration getWorkDuration() {
+	    if (timeIn == null || timeOut == null) {
+	        return Duration.ZERO;
+	    }
+	    return Duration.between(timeIn, timeOut);
+	}
+	
+	public void setTimeIn(LocalDateTime timeIn) {
+	    this.timeIn = timeIn;
+	    if (this.date == null && timeIn != null) {
+	        this.date = timeIn.toLocalDate();
+	    }
+	}
 }

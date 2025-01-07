@@ -9,7 +9,7 @@ import employee_management_app.model.Employee;
 import employee_management_app.model.LeaveRequest;
 
 @Repository
-public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long>{
+public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
 
 	Page<LeaveRequest> findByEmployee(Employee employee, Pageable pageable);
 }

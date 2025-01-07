@@ -9,7 +9,7 @@ import employee_management_app.model.Employee;
 import employee_management_app.model.Schedule;
 
 @Repository
-public interface ScheduleRepository extends JpaRepository<Schedule, Long>{
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
 	List<Schedule> findByEmployee(Employee employee);
 }

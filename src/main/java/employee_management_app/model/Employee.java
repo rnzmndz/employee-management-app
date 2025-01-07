@@ -84,16 +84,26 @@ public class Employee {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
 	private Set<Attendance> attendanceRecords = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Schedule> schedules = new HashSet<>();
 	
-	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
 	private Set<LeaveRequest> leaveRequests = new HashSet<>();
-	
-	@OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-	private User user;
-	
+
+	@OneToOne(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+	private AppUser user;
+
+	public void setUser(AppUser user) {
+	    if (user == null) {
+	        if (this.user != null) {
+	            this.user.setEmployee(null);
+	        }
+	    } else {
+	        user.setEmployee(this);
+	    }
+	    this.user = user;
+	}
 }

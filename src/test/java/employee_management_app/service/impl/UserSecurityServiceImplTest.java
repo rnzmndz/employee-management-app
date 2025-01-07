@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import employee_management_app.model.User;
+import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 
 public class UserSecurityServiceImplTest {
@@ -34,12 +34,12 @@ public class UserSecurityServiceImplTest {
     @InjectMocks
     private UserSecurityServiceImpl userSecurityService;
 
-    private User user;
+    private AppUser user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new User();
+        user = new AppUser();
         user.setFailedAttempt(0);
         user.setAccountNonLocked(true);
     }
@@ -48,7 +48,7 @@ public class UserSecurityServiceImplTest {
     void incrementFailedAttempts_ShouldIncrementAndNotLock() {
         // Given
         user.setFailedAttempt(1);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         userSecurityService.incrementFailedAttempts(user);
@@ -63,7 +63,7 @@ public class UserSecurityServiceImplTest {
     void incrementFailedAttempts_ShouldLockUserAfterMaxAttempts() {
         // Given
         user.setFailedAttempt(2);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         userSecurityService.incrementFailedAttempts(user);
@@ -83,7 +83,7 @@ public class UserSecurityServiceImplTest {
         user.setLockTime(lockTime);
         user.setAccountNonLocked(false);
         user.setFailedAttempt(3);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         boolean result = userSecurityService.unlockWhenTimeExpired(user);
@@ -116,7 +116,7 @@ public class UserSecurityServiceImplTest {
     void resetFailedAttempts_ShouldResetCounter() {
         // Given
         user.setFailedAttempt(2);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         userSecurityService.resetFailedAttempts(user);
@@ -129,7 +129,7 @@ public class UserSecurityServiceImplTest {
     @Test
     void updateLastLogin_ShouldUpdateLoginTime() {
         // Given
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         userSecurityService.updateLastLogin(user);
@@ -142,7 +142,7 @@ public class UserSecurityServiceImplTest {
     @Test
     void generatePasswordResetToken_ShouldGenerateToken() {
         // Given
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         String token = userSecurityService.generatePasswordResetToken(user);
@@ -160,7 +160,7 @@ public class UserSecurityServiceImplTest {
         String newPassword = "newPassword";
         String encodedPassword = "encodedPassword";
         when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(AppUser.class))).thenReturn(user);
 
         // When
         userSecurityService.changePassword(user, newPassword);
