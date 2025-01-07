@@ -140,10 +140,10 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public Page<EmployeeListDTO> searchEmployees(String keyword, Pageable pageable) {
 //		Get all the Employees by their firstname
-		Page<Employee> employeesFirstNamePage = employeeRepository.findByFirstName(keyword, pageable);
+		Page<Employee> employeesFirstNamePage = employeeRepository.findByFirstNameContaining(keyword, pageable);
 		
 //		Get all the Employees by their lastname
-		Page<Employee> employeesLastNamePage = employeeRepository.findByLastName(keyword, pageable);
+		Page<Employee> employeesLastNamePage = employeeRepository.findByLastNameContaining(keyword, pageable);
 
 //		Combine the two page
 		List<Employee> combinedEmployeeList = Stream.concat(employeesFirstNamePage.getContent().stream(), employeesLastNamePage.getContent().stream())
@@ -160,7 +160,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 	@Override
 	public Page<EmployeeListDTO> findByDepartment(String departmentName, Pageable pageable) {
 //		Find employees by Department Name
-		Page<Employee> employees = employeeRepository.findByDepartment_Name(departmentName, pageable);
+		Page<Employee> employees = employeeRepository.findByDepartment_NameContaining(departmentName, pageable);
 		
 //		Convert the Employee pageable data into EmployeeListDTO
 		List<EmployeeListDTO> employeeListDTOs = listMapper.toDtoList(employees.getContent());
@@ -254,7 +254,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 				.orElseThrow(() -> new ResourceNotFoundException("Department does not exist with ID: " + departmentId));
 		
 //		Find the employees
-		List<Employee> employeesByDepartment = employeeRepository.findByDepartment_Name(department.getName());
+		List<Employee> employeesByDepartment = employeeRepository.findByDepartment_NameContaining(department.getName());
 		
 		List<Employee> employeesByDeptAndPosition = employeesByDepartment.stream()
 				.filter(employee -> employee.getPosition() == position)

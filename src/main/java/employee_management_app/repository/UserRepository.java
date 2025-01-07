@@ -11,5 +11,6 @@ import employee_management_app.model.AppUser;
 public interface UserRepository extends JpaRepository<AppUser, Long>{
 
 	Optional<AppUser> findByUserName(String username);
+	
 	Boolean existsByUserName(String username);
 }
