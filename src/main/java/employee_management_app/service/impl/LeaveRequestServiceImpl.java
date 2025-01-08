@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.leaverequest.LeaveRequestDTO;
 import employee_management_app.dto.mapper.LeaveRequestMapper;
@@ -17,7 +18,10 @@ import employee_management_app.model.enums.LeaveRequestStatus;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.LeaveRequestRepository;
 import employee_management_app.service.LeaveRequestService;
+import jakarta.transaction.Transactional;
 
+@Service
+@Transactional
 public class LeaveRequestServiceImpl implements LeaveRequestService{
 	
 	@Autowired

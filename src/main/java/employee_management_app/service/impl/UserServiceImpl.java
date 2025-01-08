@@ -1,14 +1,18 @@
 package employee_management_app.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.mapper.user.UserCreateMapper;
+import employee_management_app.dto.mapper.user.UserCredentialsMapper;
 import employee_management_app.dto.mapper.user.UserMapper;
 import employee_management_app.dto.mapper.user.UserUpdateMapper;
 import employee_management_app.dto.user.UserCreateDTO;
@@ -16,8 +20,8 @@ import employee_management_app.dto.user.UserDTO;
 import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.exception.UserNotFoundException;
 import employee_management_app.exception.UsernameAlreadyExistsException;
-import employee_management_app.model.Employee;
 import employee_management_app.model.AppUser;
+import employee_management_app.model.Employee;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserService;
@@ -37,8 +41,8 @@ public class UserServiceImpl implements UserService {
     private UserCreateMapper createMapper;
     @Autowired
     private UserUpdateMapper updateMapper;
-//    @Autowired
-//    private UserCredentialsMapper credentialsMapper;
+    @Autowired
+    private UserCredentialsMapper credentialsMapper;
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -70,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
 //		Set default permission based on role
 //		FIXME fix this later
-//		setDefaultPermissions(user);
+		setDefaultPermissions(user);
 
 //		Set CreatedAt Time and date when it created
 		user.setCreatedAt(LocalDateTime.now());
@@ -142,21 +146,21 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
 	}
 //	FIXME FIX this later
-//	protected void setDefaultPermissions(User user) {
-//		if (user.getRole() == null) {
-//			throw new IllegalArgumentException("User role cannot be null");
-//		}
-//
-//		Set<String> permissions = new HashSet<>();
-//
-//		switch (user.getRole()) {
-//		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
-//				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
-//		case MANAGER ->
-//			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
-//		default -> {
-//		}
-//		}
-//		user.setPermissions(permissions);
-//	}
+	protected void setDefaultPermissions(AppUser user) {
+		if (user.getRole() == null) {
+			throw new IllegalArgumentException("User role cannot be null");
+		}
+
+		Set<String> permissions = new HashSet<>();
+
+		switch (user.getRole()) {
+		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
+				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
+		case MANAGER ->
+			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
+		default -> {
+		}
+		}
+		user.setPermissions(permissions);
+	}
 }

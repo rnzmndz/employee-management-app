@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.mapper.ScheduleMapper;
 import employee_management_app.dto.schedule.ScheduleDTO;
@@ -15,7 +16,10 @@ import employee_management_app.model.Schedule;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.ScheduleRepository;
 import employee_management_app.service.ScheduleService;
+import jakarta.transaction.Transactional;
 
+@Service
+@Transactional
 public class ScheduleServiceImpl implements ScheduleService{
 	
 	@Autowired

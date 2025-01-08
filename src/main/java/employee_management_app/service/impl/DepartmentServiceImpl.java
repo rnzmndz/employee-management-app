@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.department.DepartmentDTO;
 import employee_management_app.dto.employee.EmployeeDetailDTO;
@@ -20,7 +21,10 @@ import employee_management_app.model.Employee;
 import employee_management_app.repository.DepartmentRepository;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.service.DepartmentService;
+import jakarta.transaction.Transactional;
 
+@Service
+@Transactional
 public class DepartmentServiceImpl implements DepartmentService{
 	
 	@Autowired

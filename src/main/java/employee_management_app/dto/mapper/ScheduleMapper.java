@@ -2,14 +2,16 @@ package employee_management_app.dto.mapper;
 
 import java.util.List;
 
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import employee_management_app.dto.schedule.ScheduleDTO;
 import employee_management_app.model.Schedule;
 
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ScheduleMapper {
 	
-	@Mapping(target = "employee", ignore = true)
     ScheduleDTO toDTO(Schedule schedule);
     
 	@Mapping(target = "id", ignore = true)
