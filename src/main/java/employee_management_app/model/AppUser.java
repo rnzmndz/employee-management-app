@@ -59,6 +59,7 @@ public class AppUser {
 	@Column(name = "failed_attempt")
 	private Integer failedAttempt;
 	
+	@Builder.Default
 	@Column(name = "account_non_locked")
 	private boolean accountNonLocked = true;
 	
@@ -91,6 +92,7 @@ public class AppUser {
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
     
@@ -100,6 +102,7 @@ public class AppUser {
     		joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "permission")
+    @Builder.Default
     private Set<String> permissions = new HashSet<>();
     
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -108,6 +111,7 @@ public class AppUser {
         permissions.forEach(permission -> 
             authorities.add(new SimpleGrantedAuthority(permission))
         );
+        permissions.forEach(perm -> System.out.println(perm.toString()));
         return authorities;
 	}
 }

@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class UserSecurityServiceImpl implements UserSecurityService{
+public class UserSecurityServiceImpl implements UserSecurityService {
 	
 	private static final int MAX_FAILED_ATTEMPTS = 3;
 	private static final long LOCK_TIME_DURATION = 24;

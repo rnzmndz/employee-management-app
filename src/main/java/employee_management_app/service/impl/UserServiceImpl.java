@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.mapper.user.UserCreateMapper;
-import employee_management_app.dto.mapper.user.UserCredentialsMapper;
 import employee_management_app.dto.mapper.user.UserMapper;
 import employee_management_app.dto.mapper.user.UserUpdateMapper;
 import employee_management_app.dto.user.UserCreateDTO;
@@ -41,8 +40,8 @@ public class UserServiceImpl implements UserService {
     private UserCreateMapper createMapper;
     @Autowired
     private UserUpdateMapper updateMapper;
-    @Autowired
-    private UserCredentialsMapper credentialsMapper;
+//    @Autowired
+//    private UserCredentialsMapper credentialsMapper;
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -78,6 +77,7 @@ public class UserServiceImpl implements UserService {
 
 //		Set CreatedAt Time and date when it created
 		user.setCreatedAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
 		
 //		Save the user in database
 		user = userRepository.save(user);

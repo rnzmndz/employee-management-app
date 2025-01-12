@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -21,6 +22,7 @@ import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserSecurityService;
 
 @Component
+@Primary
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	
 	@Autowired
@@ -41,10 +43,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 		
 		if (!user.isAccountNonLocked()) {
-			if (!user.isAccountNonLocked()) {
 				if (userSecurityService.unlockWhenTimeExpired(user)) {
 					return authenticateUser(user, password);
-				}
 			}
 		} else {
 			throw new LockedException("Account is locked");
@@ -56,15 +56,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (passwordEncoder.matches(password, user.getPassword())) {
             userSecurityService.resetFailedAttempts(user);
             userSecurityService.updateLastLogin(user);
-            
-            List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-            );
-            
+           
             return new UsernamePasswordAuthenticationToken(
                 user.getUserName(), 
                 password,
-                authorities
+                user.getAuthorities()
             );
         } else {
             userSecurityService.incrementFailedAttempts(user);

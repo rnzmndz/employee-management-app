@@ -17,28 +17,28 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/attendance")
 public class AttendanceController {
 
-//    @Autowired
-//    private AttendanceService attendanceService;
-//
-//    @PostMapping
-//    public ResponseEntity<Void> recordAttendance(@Valid @RequestBody AttendanceDTO attendanceDTO) {
-//        attendanceService.recordAttendance(attendanceDTO);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @GetMapping("/employee/{employeeId}")
-//    public ResponseEntity<Page<AttendanceDTO>> getAttendanceByDateRange(
-//            @PathVariable Long employeeId,
-//            @RequestParam LocalDate startDate,
-//            @RequestParam LocalDate endDate,
-//            Pageable pageable) {
-//        return ResponseEntity.ok(attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable));
-//    }
-//
-//    @GetMapping("/statistics")
-//    public ResponseEntity<Map<String, Object>> getAttendanceStatistics(
-//            @RequestParam LocalDate startDate,
-//            @RequestParam LocalDate endDate) {
-//        return ResponseEntity.ok(attendanceService.getAttendanceStatistics(startDate, endDate));
-//    }
+    @Autowired
+    private AttendanceService attendanceService;
+
+    @PostMapping
+    public ResponseEntity<Void> recordAttendance(@Valid @RequestBody AttendanceDTO attendanceDTO) {
+        attendanceService.recordAttendance(attendanceDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<Page<AttendanceDTO>> getAttendanceByDateRange(
+            @PathVariable Long employeeId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            Pageable pageable) {
+        return ResponseEntity.ok(attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable));
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<Map<String, Object>> getAttendanceStatistics(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+        return ResponseEntity.ok(attendanceService.getAttendanceStatistics(startDate, endDate));
+    }
 }
