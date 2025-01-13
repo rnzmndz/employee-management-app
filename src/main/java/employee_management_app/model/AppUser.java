@@ -106,12 +106,8 @@ public class AppUser {
     private Set<String> permissions = new HashSet<>();
     
     public Collection<? extends GrantedAuthority> getAuthorities() {
-    	Set<GrantedAuthority> authorities = new HashSet<>();
+        Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
-        permissions.forEach(permission -> 
-            authorities.add(new SimpleGrantedAuthority(permission))
-        );
-        permissions.forEach(perm -> System.out.println(perm.toString()));
         return authorities;
-	}
+    }
 }

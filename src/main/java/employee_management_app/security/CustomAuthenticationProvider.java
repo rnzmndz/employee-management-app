@@ -20,9 +20,9 @@ import org.springframework.stereotype.Component;
 import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserSecurityService;
-
-@Component
-@Primary
+//
+//@Component
+//@Primary
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	
 	@Autowired
