@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
+import employee_management_app.security.UserSecurityService;
 
 public class UserSecurityServiceImplTest {
 
@@ -32,7 +33,7 @@ public class UserSecurityServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserSecurityServiceImpl userSecurityService;
+    private UserSecurityService userSecurityService;
 
     private AppUser user;
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,13 +28,18 @@ public class UserServiceAspect {
 	/**
 	 * Pointcut that matches all methods in UserService implementation
 	 */
-	@Pointcut("execution(* employee_management_app.service.UserServiceImpl.*(..))")
-	public void userServiceMethods() {}
+	@Pointcut("execution(* employee_management_app.service.*.*(..))")
+	public void serviceMethods() {}
 	
+	@Pointcut("execution(* employee_management_app.repository.*.*(..))")
+	public void repositoryMethods() {}
+	
+	@Pointcut("execution(* employee_management_app.controller.*.*(..))")
+	public void controllerMethods() {}
 	/**
 	 * Log method entry with parameters
 	 */
-	@Before("userServiceMethods()")
+	@Before("serviceMethods() || repositoryMethods() || controllerMethods()" )
 	public void logMethodEntry(JoinPoint joinPoint) {
 		String methodName = joinPoint.getSignature().getName();
 		Object[] args = joinPoint.getArgs();
@@ -67,15 +73,15 @@ public class UserServiceAspect {
 		}
 	}
 	
-	@AfterReturning(pointcut = "execution(* employee_management_app.service.UserServiceImpl.createUser(..)) || "
-			+ "\"execution(* employee_management_app.service.UserServiceImpl.updateUser(..))",
-			returning = "result")
-	public void auditOperation(JoinPoint joinPoint, Object result) {
-		if (result instanceof UserDTO) {
-			UserDTO userDTO = (UserDTO) result;
-			auditLog(joinPoint.getSignature().getName(), userDTO.getEmployeeId());
-		}
-	}
+//	@AfterReturning(pointcut = "execution(* employee_management_app.service.UserServiceImpl.createUser(..)) || "
+//			+ "\"execution(* employee_management_app.service.UserServiceImpl.updateUser(..))",
+//			returning = "result")
+//	public void auditOperation(JoinPoint joinPoint, Object result) {
+//		if (result instanceof UserDTO) {
+//			UserDTO userDTO = (UserDTO) result;
+//			auditLog(joinPoint.getSignature().getName(), userDTO.getEmployeeId());
+//		}
+//	}
 	
 	private void validateUserDTO(UserDTO userDTO) {
 		List<String> violations = new ArrayList<>();
@@ -93,12 +99,22 @@ public class UserServiceAspect {
 		}
 	}
 	
-	private void auditLog(String operation, Long userId) {
-//		Get current authenticated user
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String performer = auth != null ? auth.getName() : "SYSTEM";
-		
-		log.info("AUDIT: {} performed {} on user ID: {}",
-				performer, operation, userId);
+	/**
+	 * Log method entry with parameters
+	 */
+	@After("serviceMethods() || repositoryMethods() || controllerMethods()" )
+	public void logMethodExit(JoinPoint joinPoint) {
+		String methodName = joinPoint.getSignature().getName();
+		Object[] args = joinPoint.getArgs();
+		log.info("Exiting method: {} with parameters: {}", methodName, Arrays.toString(args));
 	}
+	
+//	private void auditLog(String operation, Long userId) {
+////		Get current authenticated user
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		String performer = auth != null ? auth.getName() : "SYSTEM";
+//		
+//		log.info("AUDIT: {} performed {} on user ID: {}",
+//				performer, operation, userId);
+//	}
 }
