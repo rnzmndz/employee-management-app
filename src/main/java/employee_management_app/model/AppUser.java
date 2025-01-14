@@ -9,10 +9,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import employee_management_app.model.enums.UserRole;
 import employee_management_app.model.enums.UserStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -34,6 +34,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@SuppressWarnings("serial")
 @Data
 @Builder
 @NoArgsConstructor
@@ -43,14 +44,14 @@ import lombok.NoArgsConstructor;
 })
 @Entity
 @EqualsAndHashCode(of = "id")
-public class AppUser {
+public class AppUser implements UserDetails{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(name = "user_name", nullable = false, unique = true)
-	private String userName;
+	private String username;
 	
 	@Column(name = "password", nullable = false)
 	@JsonIgnore
@@ -60,9 +61,17 @@ public class AppUser {
 	private Integer failedAttempt;
 	
 	@Builder.Default
-	@Column(name = "account_non_locked")
-	private boolean accountNonLocked = true;
-	
+	@Column(name = "account_non_expired")
+    private Boolean accountNonExpired = true;
+    
+	@Builder.Default
+    @Column(name = "account_non_locked")
+    private Boolean accountNonLocked = true;
+    
+	@Builder.Default
+    @Column(name = "credentials_non_expired")
+    private Boolean credentialsNonExpired = true;
+
 	@Column(name = "lock_time")
 	private LocalDateTime lockTime;
 	
@@ -74,10 +83,6 @@ public class AppUser {
 	
 	@Column(name = "reset_token_expiry")
 	private LocalDateTime resetTokenExpiry;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false)
-	private UserRole role;
 	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employee_id", nullable = false)
@@ -98,16 +103,20 @@ public class AppUser {
     
     @ElementCollection
     @CollectionTable(
-    		name = "user_permission",
+    		name = "user_roles",
     		joinColumns = @JoinColumn(name = "user_id")
     )
-    @Column(name = "permission")
+    @Column(name = "role")
     @Builder.Default
-    private Set<String> permissions = new HashSet<>();
+    private Set<String> roles = new HashSet<>();
     
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        }
         return authorities;
     }
+
 }
