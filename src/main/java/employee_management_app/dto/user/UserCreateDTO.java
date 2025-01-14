@@ -25,11 +25,10 @@ public class UserCreateDTO {
     private String password;
     
     @NotNull
-    private UserRole role;
-    
-    @NotNull
     private Long employeeId;
     
-    private Set<String> permissions = new HashSet<>();
+    @Builder.Default
+    @NotNull
+    private Set<String> roles = new HashSet<>();
 }
 

@@ -89,7 +89,7 @@ class UserServiceImplTest {
 
     @Test
     void createUser_Success() {
-        when(userRepository.existsByUserName(anyString())).thenReturn(false);
+        when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.of(employee));
         when(createMapper.toEntity(any(UserCreateDTO.class))).thenReturn(user);
         when(userRepository.save(any(AppUser.class))).thenReturn(user);
@@ -105,7 +105,7 @@ class UserServiceImplTest {
 
     @Test
     void createUser_UsernameExists_ThrowsException() {
-        when(userRepository.existsByUserName(anyString())).thenReturn(true);
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         assertThrows(UsernameAlreadyExistsException.class, () -> 
             userService.createUser(createDTO)
@@ -123,7 +123,7 @@ class UserServiceImplTest {
 
     @Test
     void createUser_EmployeeNotFound_ThrowsException() {
-        when(userRepository.existsByUserName(anyString())).thenReturn(false);
+        when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(employeeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> 
@@ -133,7 +133,7 @@ class UserServiceImplTest {
 
     @Test
     void findByUsername_Success() {
-        when(userRepository.findByUserName(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findOptionalByUsername(anyString())).thenReturn(Optional.of(user));
         when(userMapper.toDto(any(AppUser.class))).thenReturn(userDTO);
 
         Optional<UserDTO> result = userService.findByUsername("testUser");
@@ -144,7 +144,7 @@ class UserServiceImplTest {
 
     @Test
     void findByUsername_NotFound() {
-        when(userRepository.findByUserName(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findOptionalByUsername(anyString())).thenReturn(Optional.empty());
 
         Optional<UserDTO> result = userService.findByUsername("nonexistent");
 
@@ -174,7 +174,7 @@ class UserServiceImplTest {
     @Test
     void updateUser_DuplicateUsername_ThrowsException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(userRepository.existsByUserName(anyString())).thenReturn(true);
+        when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         assertThrows(UsernameAlreadyExistsException.class, () -> 
             userService.updateUser(1L, updateDTO)

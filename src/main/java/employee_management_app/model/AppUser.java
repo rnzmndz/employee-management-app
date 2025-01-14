@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import employee_management_app.model.enums.UserRole;
 import employee_management_app.model.enums.UserStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -50,7 +51,7 @@ public class AppUser implements UserDetails{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "user_name", nullable = false, unique = true)
+	@Column(name = "username", nullable = false, unique = true)
 	private String username;
 	
 	@Column(name = "password", nullable = false)
@@ -101,7 +102,7 @@ public class AppUser implements UserDetails{
     @Column(name = "status", nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
     		name = "user_roles",
     		joinColumns = @JoinColumn(name = "user_id")
@@ -117,6 +118,10 @@ public class AppUser implements UserDetails{
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
         return authorities;
+    }
+    
+    public void addRole(UserRole role) {
+    	this.roles.add(role.name());
     }
 
 }

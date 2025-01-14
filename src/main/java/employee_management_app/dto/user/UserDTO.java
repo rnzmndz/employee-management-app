@@ -18,7 +18,6 @@ public class UserDTO {
 
 	private Long id;
     private String userName;
-    private UserRole role;
     private LocalDateTime lastLogin;
     private UserStatus status;
     private Set<String> permissions;

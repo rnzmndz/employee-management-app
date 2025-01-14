@@ -10,9 +10,9 @@ import employee_management_app.model.AppUser;
 @Repository
 public interface UserRepository extends JpaRepository<AppUser, Long>{
 
-	Optional<AppUser> findByUserName(String username);
+	Optional<AppUser> findOptionalByUsername(String username);
 	
-	Boolean existsByUserName(String username);
+	Boolean existsByUsername(String username);
 
 	AppUser findByUsername(String username);
 }

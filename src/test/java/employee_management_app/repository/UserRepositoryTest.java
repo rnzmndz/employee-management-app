@@ -19,7 +19,7 @@ public class UserRepositoryTest {
     @Test
     void findByUserName_ShouldReturnUser() {
         // When
-        Optional<AppUser> found = userRepository.findByUserName("john.doe");
+        Optional<AppUser> found = userRepository.findOptionalByUsername("john.doe");
 
         // Then
         assertThat(found).isPresent();
@@ -29,7 +29,7 @@ public class UserRepositoryTest {
     @Test
     void existsByUserName_ShouldReturnTrue() {
         // When
-        boolean exists = userRepository.existsByUserName("john.doe");
+        boolean exists = userRepository.existsByUsername("john.doe");
 
         // Then
         assertThat(exists).isTrue();

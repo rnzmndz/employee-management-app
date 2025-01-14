@@ -1,11 +1,8 @@
 package employee_management_app.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +18,7 @@ import employee_management_app.exception.UserNotFoundException;
 import employee_management_app.exception.UsernameAlreadyExistsException;
 import employee_management_app.model.AppUser;
 import employee_management_app.model.Employee;
+import employee_management_app.model.enums.UserRole;
 import employee_management_app.repository.EmployeeRepository;
 import employee_management_app.repository.UserRepository;
 import employee_management_app.service.UserService;
@@ -54,7 +52,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 //		Validate if username is unique
-		if (userRepository.existsByUserName(dto.getUserName())) {
+		if (userRepository.existsByUsername(dto.getUserName())) {
 			throw new UsernameAlreadyExistsException("Username already taken");
 		}
 
@@ -73,9 +71,10 @@ public class UserServiceImpl implements UserService {
 
 //		Set default permission based on role
 //		FIXME fix this later
-		setDefaultPermissions(user);
+//		setDefaultPermissions(user);
 
 //		Set CreatedAt Time and date when it created
+		user.addRole(UserRole.EMPLOYEE);
 		user.setCreatedAt(LocalDateTime.now());
 		user.setUpdatedAt(LocalDateTime.now());
 		
@@ -90,7 +89,7 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("The username input is empty or null");
 		}
 
-		return userRepository.findByUserName(username).map(userMapper::toDto);
+		return userRepository.findOptionalByUsername(username).map(userMapper::toDto);
 	}
 
 	@Override
@@ -120,11 +119,11 @@ public class UserServiceImpl implements UserService {
 //		Map only non-null fields from updatedUSer to existingUser
 		if (updatedUser.getUserName() != null) {
 //			Check if new username conflicts with other users
-			if (!existingUser.getUserName().equals(updatedUser.getUserName())
-					&& userRepository.existsByUserName(updatedUser.getUserName())) {
+			if (!existingUser.getUsername().equals(updatedUser.getUserName())
+					&& userRepository.existsByUsername(updatedUser.getUserName())) {
 				throw new UsernameAlreadyExistsException("Username already taken");
 			}
-			existingUser.setUserName(updatedUser.getUserName());
+			existingUser.setUsername(null);
 		}
 		
 //		Update the entity from the data from DTO
@@ -146,21 +145,21 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
 	}
 //	FIXME FIX this later
-	protected void setDefaultPermissions(AppUser user) {
-		if (user.getRole() == null) {
-			throw new IllegalArgumentException("User role cannot be null");
-		}
-
-		Set<String> permissions = new HashSet<>();
-
-		switch (user.getRole()) {
-		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
-				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
-		case MANAGER ->
-			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
-		default -> {
-		}
-		}
-		user.setPermissions(permissions);
-	}
+//	protected void setDefaultPermissions(AppUser user) {
+//		if (user.getRoles() == null) {
+//			throw new IllegalArgumentException("User role cannot be null");
+//		}
+//
+//		Set<String> permissions = new HashSet<>();
+//
+//		switch (user.getRole()) {
+//		case ADMIN -> permissions.addAll(Arrays.asList("USER_CREATE", "USER_READ", "USER_UPDATE", "USER_DELETE",
+//				"EMPLOYEE_CREATE", "EMPLOYEE_READ", "EMPLOYEE_UPDATE", "EMPLOYEE_DELETE"));
+//		case MANAGER ->
+//			permissions.addAll(Arrays.asList("EMPLOYEE_READ", "EMPLOYEE_UPDATE", "LEAVE_APPROVE", "ATTENDANCE_VIEW"));
+//		default -> {
+//		}
+//		}
+//		user.setPermissions(permissions);
+//	}
 }

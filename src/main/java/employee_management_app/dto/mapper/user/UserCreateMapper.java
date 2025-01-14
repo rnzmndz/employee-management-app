@@ -14,6 +14,8 @@ public interface UserCreateMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "employee.id", source = "employeeId")
 	@Mapping(target = "accountNonLocked", constant = "true")
+	@Mapping(target = "accountNonExpired", constant = "true")
+	@Mapping(target = "credentialsNonExpired", constant = "true")
 	@Mapping(target = "failedAttempt", constant = "0")
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
