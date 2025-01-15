@@ -16,11 +16,13 @@ INSERT INTO employee (id, first_name, last_name, email, phone, position, departm
 (7, 'James', 'Miller', 'james.m@company.com', '7890123456', 'Accountant', 3, 'ACCOUNTANT', '2023-07-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP),
 (8, 'Lisa', 'Taylor', 'lisa.t@company.com', '8901234567', 'Marketing Manager', 4, 'MANAGER', '2023-08-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP),
 (9, 'Robert', 'Anderson', 'robert.a@company.com', '9012345678', 'System Admin', 1, 'ADMIN', '2023-09-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP),
-(10, 'Emma', 'Thomas', 'emma.t@company.com', '0123456789', 'Financial Analyst', 3, 'ANALYST', '2023-10-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP);
+(10, 'Emma', 'Thomas', 'emma.t@company.com', '0123456789', 'Financial Analyst', 3, 'ANALYST', '2023-10-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP),
+(11, 'Admin', 'Admin', 'admin@company.com', '2134234', 'ADMIN', 3, 'ADMIN', '2023-10-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP),
+(12, 'User', 'User', 'user@company.com', '5324534', 'USER', 3, 'USER', '2023-10-01 09:00:00', 'ACTIVE', CURRENT_TIMESTAMP);
 
 -- Users (password is 'password' - in real application should be properly hashed)
 INSERT INTO app_users (id, username, password, failed_attempt, account_non_expired, account_non_locked, credentials_non_expired, lock_time, last_login, password_reset_token, reset_token_expiry, employee_id, created_at, updated_at, status) VALUES
-(1, 'admin', 'admin', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
+(1, 'john_doe', 'password123', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
 (2, 'jane_smith', 'password456', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
 (3, 'alice_wonder', 'password789', 1, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
 (4, 'bob_builder', 'password321', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
@@ -29,7 +31,11 @@ INSERT INTO app_users (id, username, password, failed_attempt, account_non_expir
 (7, 'eve_explorer', 'password111', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
 (8, 'frank_friendly', 'password222', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 8, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
 (9, 'grace_gritty', 'password333', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
-(10, 'helen_hero', 'password444', 1, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE');
+(10, 'helen_hero', 'password444', 1, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
+(11, 'admin', 'admin', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 11, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE'),
+(12, 'user', 'user', 0, TRUE, TRUE, TRUE, NULL, NULL, NULL, NULL, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ACTIVE');
+
+
 
 --User Roles
 INSERT INTO user_roles (user_id, role) VALUES
@@ -45,7 +51,9 @@ INSERT INTO user_roles (user_id, role) VALUES
 (8, 'ADMIN'),
 (9, 'USER'),
 (10, 'USER'),
-(10, 'MODERATOR');
+(10, 'MODERATOR'),
+(12, 'USER'),
+(11, 'ADMIN');
 
 -- Sample Schedules
 INSERT INTO schedule (employee_id, date, shift_start_time, shift_end_time, description, created_at) VALUES
@@ -69,4 +77,4 @@ UPDATE app_users SET
     updated_at = '2024-01-01 09:00:00',
     last_login = '2024-01-06 17:00:00',
     failed_attempt = 0
-WHERE id IN (1,2,3,4,5,6,7,8,9,10);
+WHERE id IN (1,2,3,4,5,6,7,8,9,10,11,12);
