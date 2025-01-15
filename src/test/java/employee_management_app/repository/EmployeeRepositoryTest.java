@@ -1,88 +1,190 @@
 package employee_management_app.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import employee_management_app.dto.department.DepartmentDTO;
+import employee_management_app.dto.employee.EmployeeCreateDTO;
+import employee_management_app.dto.mapper.DepartmentMapper;
+import employee_management_app.dto.mapper.employee.EmployeeCreateMapper;
+import employee_management_app.model.Department;
 import employee_management_app.model.Employee;
 import employee_management_app.model.enums.EmployeeStatus;
 
-@DataJpaTest
+@SpringBootTest
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.HSQLDB)
 public class EmployeeRepositoryTest {
 
     @Autowired
     private EmployeeRepository employeeRepository;
-
-    @Test
-    void findByFirstName_ShouldReturnEmployee() {
-    	
-        // When
-        Page<Employee> found = employeeRepository.findByFirstNameContaining("JoH", PageRequest.of(0, 10));
-
-        // Then
-        assertThat(found).isNotEmpty();
-        assertThat(found.getContent().get(0).getFirstName()).isEqualTo("John");
-    }
     
-    @Test
-    void findByLastName_ShouldReturnEmployee() {
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private DepartmentRepository departmentRepository;
+    
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+    
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    
+    @Autowired
+    private EmployeeCreateMapper employeeCreateMapper;
+    
+    @Autowired
+    private DepartmentMapper departmentMapper;
+
+    private Employee employee1;
+    private Employee employee2;
+    private Pageable pageable;
+
+    @BeforeEach
+    void setUp() {
+    	leaveRequestRepository.deleteAll();
+    	attendanceRepository.deleteAll();
+    	userRepository.deleteAll();
+    	employeeRepository.deleteAll();
+    	departmentRepository.deleteAll();
     	
-        // When
-        Page<Employee> found = employeeRepository.findByLastNameContaining("DO", PageRequest.of(0, 10));
-
-        // Then
-        assertThat(found).isNotEmpty();
-        assertThat(found.getContent().get(0).getLastName()).isEqualTo("Doe");
-    }
-
-    @Test
-    void findByDepartmentName_ShouldReturnEmployees() {
+    	DepartmentDTO departmentDTO1 = new DepartmentDTO(1L, "IT", "Sample IT");
     	
-        // When
-        Page<Employee> found = employeeRepository.findByDepartment_NameContaining("FI", PageRequest.of(0, 10));
+    	Department department1 = departmentRepository.save(departmentMapper.toEntity(departmentDTO1)); 
 
-        // Then
-        assertThat(found).isNotEmpty();
-        assertThat(found.getContent().size()).isEqualTo(3);
-        assertThat(found.getContent().get(0).getDepartment().getName()).isEqualTo("Finance");
-    }
-
-    @Test
-    void existsByEmail_ShouldReturnTrue() {
-      
-        // When
-        boolean exists = employeeRepository.existsByEmail("john.doe@company.com");
-
-        // Then
-        assertThat(exists).isTrue();
-    }
-
-    @Test
-    void findByStatus_ShouldReturnEmployees() {
+        // Create test employees
+        EmployeeCreateDTO employeeDTO1 = EmployeeCreateDTO.builder()
+        		.firstName("John")
+        		.lastName("Doe")
+        		.email("john.doe@company.com")
+        		.phone("1234567890")
+        		.position("Software Engineer")
+        		.departmentId(department1.getId())
+        		.role("Engineer")
+        		.dateHired(LocalDateTime.now())
+        		.build();
         
-        // When
-        Page<Employee> found = employeeRepository.findByStatus(EmployeeStatus.ACTIVE, PageRequest.of(0, 10));
+        EmployeeCreateDTO employeeDTO2 = EmployeeCreateDTO.builder()
+        		.firstName("Jane")
+        		.lastName("Smith")
+        		.email("jane.smith@company.com")
+        		.phone("0987654321")
+        		.position("Senior Developer")
+        		.departmentId(department1.getId())
+        		.role("Engineer")
+        		.dateHired(LocalDateTime.now())
+        		.build();
 
-        // Then
-        assertThat(found).isNotEmpty();
-        assertThat(found.getContent().size()).isEqualTo(10);
-        assertThat(found.getContent().get(0).getStatus()).isEqualTo(EmployeeStatus.ACTIVE);
+        employee1 = employeeCreateMapper.toEntity(employeeDTO1);
+        employee2 = employeeCreateMapper.toEntity(employeeDTO2);
+        
+        // Save test data
+        employeeRepository.save(employee1);
+        employeeRepository.save(employee2);
+
+        // Initialize pageable
+        pageable = PageRequest.of(0, 10);
     }
-    
+
     @Test
-    void findByPosition_ShouldReturnEmployees() {
-    	
-    	// When
-    	List<Employee> employees = employeeRepository.findByPositionContaining("MAN");
-    	
-    	// Then
-    	assertThat(employees).isNotEmpty();
-    	assertThat(employees.size()).isEqualTo(2);
+    void findAll_ShouldReturnAllEmployees() {
+        Page<Employee> result = employeeRepository.findAll(pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().size() >= 2);
+        assertTrue(result.getContent().contains(employee1));
+        assertTrue(result.getContent().contains(employee2));
+    }
+
+    @Test
+    void findByFirstNameContaining_ShouldReturnMatchingEmployees() {
+        Page<Employee> result = employeeRepository.findByFirstNameContaining("John", pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().contains(employee1));
+        assertFalse(result.getContent().contains(employee2));
+    }
+
+    @Test
+    void findByLastNameContaining_ShouldReturnMatchingEmployees() {
+        Page<Employee> result = employeeRepository.findByLastNameContaining("Smith", pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().contains(employee2));
+        assertFalse(result.getContent().contains(employee1));
+    }
+
+    @Test
+    void findByDepartmentNameContaining_ShouldReturnMatchingEmployees() {
+        Page<Employee> result = employeeRepository.findByDepartment_NameContaining("IT", pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().contains(employee1));
+        assertTrue(result.getContent().contains(employee2));
+    }
+
+    @Test
+    void findByStatus_ShouldReturnMatchingEmployees() {
+        Page<Employee> result = employeeRepository.findByStatus(EmployeeStatus.ACTIVE, pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().contains(employee1));
+        assertTrue(result.getContent().contains(employee2));
+    }
+
+    @Test
+    void findByPositionContaining_ShouldReturnMatchingEmployees() {
+        Page<Employee> result = employeeRepository.findByPositionContaining("Engineer", pageable);
+        
+        assertNotNull(result);
+        assertTrue(result.getContent().contains(employee1));
+        assertFalse(result.getContent().contains(employee2));
+    }
+
+    @Test
+    void findByDepartmentNameContainingList_ShouldReturnMatchingEmployees() {
+        List<Employee> result = employeeRepository.findByDepartment_NameContaining("IT");
+        
+        assertNotNull(result);
+        assertTrue(result.contains(employee1));
+        assertTrue(result.contains(employee2));
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    void findByPositionContainingList_ShouldReturnMatchingEmployees() {
+        List<Employee> result = employeeRepository.findByPositionContaining("Developer");
+        
+        assertNotNull(result);
+        assertTrue(result.contains(employee2));
+        assertFalse(result.contains(employee1));
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void existsByEmail_ShouldReturnTrue_WhenEmailExists() {
+        assertTrue(employeeRepository.existsByEmail("john.doe@company.com"));
+        assertFalse(employeeRepository.existsByEmail("nonexistent@company.com"));
+    }
+
+    @Test
+    void existsByPhone_ShouldReturnTrue_WhenPhoneExists() {
+        assertTrue(employeeRepository.existsByPhone("1234567890"));
+        assertFalse(employeeRepository.existsByPhone("9999999999"));
     }
 }

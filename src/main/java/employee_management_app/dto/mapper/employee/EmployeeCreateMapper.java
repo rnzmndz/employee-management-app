@@ -12,7 +12,12 @@ public interface EmployeeCreateMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "department.id", source = "departmentId")
+	@Mapping(target = "status", ignore = true)
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
+	@Mapping(target = "attendanceRecords", ignore = true)
+	@Mapping(target = "schedules", ignore = true)
+	@Mapping(target = "leaveRequests", ignore = true)
+	@Mapping(target = "user", ignore = true)
 	Employee toEntity(EmployeeCreateDTO employeeCreateDTO);
 }

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserUpdateDTO {
     @Size(min = 3, max = 50)
-    private String userName;
+    private String username;
     
     private UserRole role;
     private UserStatus status;

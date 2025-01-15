@@ -84,13 +84,16 @@ public class Employee {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
-	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
+	@Builder.Default
+	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
 	private Set<Attendance> attendanceRecords = new HashSet<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Schedule> schedules = new HashSet<>();
 	
-	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
+	@Builder.Default
+	@OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
 	private Set<LeaveRequest> leaveRequests = new HashSet<>();
 
 	@OneToOne(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)

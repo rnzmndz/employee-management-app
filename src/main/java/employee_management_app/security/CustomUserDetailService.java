@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 
-@Service
-@Primary
+//@Service
+//@Primary
 public class CustomUserDetailService implements UserDetailsService {
     
     private final UserRepository userRepository;

@@ -68,23 +68,23 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         createDTO = new UserCreateDTO();
-        createDTO.setUserName("testUser");
+        createDTO.setUsername("testUser");
         createDTO.setEmployeeId(1L);
 
         updateDTO = new UserUpdateDTO();
-        updateDTO.setUserName("updatedUser");
+        updateDTO.setUsername("updatedUser");
 
         employee = new Employee();
         employee.setId(1L);
 
         user = new AppUser();
         user.setId(1L);
-        user.setUserName("testUser");
+        user.setUsername("testUser");
         user.setEmployee(employee);
 
         userDTO = new UserDTO();
         userDTO.setId(1L);
-        userDTO.setUserName("testUser");
+        userDTO.setUsername("testUser");
     }
 
     @Test
@@ -94,12 +94,12 @@ class UserServiceImplTest {
         when(createMapper.toEntity(any(UserCreateDTO.class))).thenReturn(user);
         when(userRepository.save(any(AppUser.class))).thenReturn(user);
         
-        user.setRole(UserRole.ADMIN);
+        user.addRole(UserRole.ADMIN);
 
         UserCreateDTO result = userService.createUser(createDTO);
 
         assertNotNull(result);
-        assertEquals(createDTO.getUserName(), result.getUserName());
+        assertEquals(createDTO.getUsername(), result.getUsername());
         verify(userRepository).save(any(AppUser.class));
     }
 
@@ -114,7 +114,7 @@ class UserServiceImplTest {
 
     @Test
     void createUser_NullUsername_ThrowsException() {
-        createDTO.setUserName(null);
+        createDTO.setUsername(null);
 
         assertThrows(IllegalArgumentException.class, () -> 
             userService.createUser(createDTO)
@@ -139,7 +139,7 @@ class UserServiceImplTest {
         Optional<UserDTO> result = userService.findByUsername("testUser");
 
         assertTrue(result.isPresent());
-        assertEquals("testUser", result.get().getUserName());
+        assertEquals("testUser", result.get().getUsername());
     }
 
     @Test

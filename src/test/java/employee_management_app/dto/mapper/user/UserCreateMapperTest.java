@@ -21,7 +21,7 @@ class UserCreateMapperTest {
         // Arrange
         UserCreateDTO userCreateDTO = new UserCreateDTO();
         userCreateDTO.setEmployeeId(42L);
-        userCreateDTO.setUserName("testuser");
+        userCreateDTO.setUsername("testuser");
         
         // Act
         AppUser user = mapper.toEntity(userCreateDTO);

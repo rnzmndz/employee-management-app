@@ -112,6 +112,26 @@ public class AppUser implements UserDetails{
     private Set<String> roles = new HashSet<>();
     
     @Override
+    public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+    
+    @Override
+    public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+    
+    @Override
+    public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
+    
+    @Override
+    public boolean isEnabled() {
+		return status == UserStatus.ACTIVE;
+	}
+    
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (String role : roles) {

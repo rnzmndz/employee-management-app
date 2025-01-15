@@ -52,12 +52,12 @@ public class UserServiceImpl implements UserService {
 		}
 
 //		Validate if username is unique
-		if (userRepository.existsByUsername(dto.getUserName())) {
+		if (userRepository.existsByUsername(dto.getUsername())) {
 			throw new UsernameAlreadyExistsException("Username already taken");
 		}
 
 //		Username validation should check for null first
-		if (dto.getUserName() == null || dto.getUserName().trim().isEmpty()) {
+		if (dto.getUsername() == null || dto.getUsername().trim().isEmpty()) {
 			throw new IllegalArgumentException("Username cannot be null or empty");
 		}
 
@@ -117,10 +117,10 @@ public class UserServiceImpl implements UserService {
 		AppUser existingUser = userRepository.findById(id)
 				.orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 //		Map only non-null fields from updatedUSer to existingUser
-		if (updatedUser.getUserName() != null) {
+		if (updatedUser.getUsername() != null) {
 //			Check if new username conflicts with other users
-			if (!existingUser.getUsername().equals(updatedUser.getUserName())
-					&& userRepository.existsByUsername(updatedUser.getUserName())) {
+			if (!existingUser.getUsername().equals(updatedUser.getUsername())
+					&& userRepository.existsByUsername(updatedUser.getUsername())) {
 				throw new UsernameAlreadyExistsException("Username already taken");
 			}
 			existingUser.setUsername(null);

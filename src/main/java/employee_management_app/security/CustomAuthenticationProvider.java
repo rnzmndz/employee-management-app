@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import employee_management_app.model.AppUser;
 import employee_management_app.repository.UserRepository;
 
-//@Component
-//@Primary
+@Component
+@Primary
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	
 	@Autowired
@@ -38,15 +38,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		if (!user.isAccountNonLocked()) {
 				if (userSecurityService.unlockWhenTimeExpired(user)) {
 					return authenticateUser(user, password);
-			}
-		} else {
-			throw new LockedException("Account is locked");
+					}
+				else {
+					throw new LockedException("Account is locked");
+					} 
 		}
 		return authenticateUser(user, password);
 	}
 
 	private Authentication authenticateUser(AppUser user, String password) {
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        if (passwordEncoder.matches(password, passwordEncoder.encode(user.getPassword()))) {
             userSecurityService.resetFailedAttempts(user);
             userSecurityService.updateLastLogin(user);
            

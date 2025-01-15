@@ -21,7 +21,7 @@ class UserUpdateMapperTest {
         // Arrange
         UserUpdateDTO updateDTO = new UserUpdateDTO();
         updateDTO.setEmployeeId(42L);
-        updateDTO.setUserName("updatedUser");
+        updateDTO.setUsername("updatedUser");
 
         AppUser user = new AppUser();
         user.setId(1L);
@@ -37,7 +37,7 @@ class UserUpdateMapperTest {
         // Assert
         assertNotNull(user, "User should not be null");
         assertEquals(1L, user.getId(), "ID should remain unchanged");
-        assertEquals("updatedUser", user.getUserName(), "Username should be updated");
+        assertEquals("updatedUser", user.getUsername(), "Username should be updated");
         assertEquals(42L, user.getEmployee().getId(), "Employee ID should be updated from DTO");
         assertNotNull(user.getPassword(), "Password should remain unchanged");
         assertNotNull(user.getCreatedAt(), "CreatedAt should remain unchanged");

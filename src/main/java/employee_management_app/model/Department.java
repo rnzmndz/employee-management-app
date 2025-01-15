@@ -52,6 +52,7 @@ public class Department {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 	
+    @Builder.Default
 	@OneToMany(mappedBy = "department",
 			cascade = CascadeType.ALL, 
 			orphanRemoval = true,

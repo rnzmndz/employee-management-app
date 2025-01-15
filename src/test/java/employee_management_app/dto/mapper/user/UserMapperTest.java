@@ -27,7 +27,7 @@ class UserMapperTest {
         Employee employee = new Employee();
         employee.setId(42L);
         user.setEmployee(employee);
-        user.setUserName("testuser");
+        user.setUsername("testuser");
 
         // Act
         UserDTO userDTO = mapper.toDto(user);
@@ -35,7 +35,7 @@ class UserMapperTest {
         // Assert
         assertNotNull(userDTO, "UserDTO should not be null");
         assertEquals(42L, userDTO.getEmployeeId(), "Employee ID should match the source User's Employee ID");
-        assertEquals("testuser", userDTO.getUserName(), "Username should match the source User");
+        assertEquals("testuser", userDTO.getUsername(), "Username should match the source User");
     }
 
     @Test
@@ -46,14 +46,14 @@ class UserMapperTest {
         Employee employee1 = new Employee();
         employee1.setId(42L);
         user1.setEmployee(employee1);
-        user1.setUserName("user1");
+        user1.setUsername("user1");
 
         AppUser user2 = new AppUser();
         user2.setId(2L);
         Employee employee2 = new Employee();
         employee2.setId(43L);
         user2.setEmployee(employee2);
-        user2.setUserName("user2");
+        user2.setUsername("user2");
 
         List<AppUser> users = List.of(user1, user2);
 
@@ -66,11 +66,11 @@ class UserMapperTest {
 
         UserDTO userDTO1 = userDTOs.get(0);
         assertEquals(42L, userDTO1.getEmployeeId(), "First UserDTO Employee ID should match");
-        assertEquals("user1", userDTO1.getUserName(), "First UserDTO Username should match");
+        assertEquals("user1", userDTO1.getUsername(), "First UserDTO Username should match");
 
         UserDTO userDTO2 = userDTOs.get(1);
         assertEquals(43L, userDTO2.getEmployeeId(), "Second UserDTO Employee ID should match");
-        assertEquals("user2", userDTO2.getUserName(), "Second UserDTO Username should match");
+        assertEquals("user2", userDTO2.getUsername(), "Second UserDTO Username should match");
     }
     
     @Test
@@ -78,7 +78,7 @@ class UserMapperTest {
         AppUser user = new AppUser();
         user.setId(1L);
         user.setEmployee(null);
-        user.setUserName("testuser");
+        user.setUsername("testuser");
         
         UserDTO userDTO = mapper.toDto(user);
         
@@ -98,7 +98,7 @@ class UserMapperTest {
         AppUser user = new AppUser();
         user.setId(1L);
         user.setEmployee(new Employee());
-        user.setUserName("testuser");
+        user.setUsername("testuser");
         // Add some field to User that isn't in UserDTO
         
         // Act
@@ -117,7 +117,7 @@ class UserMapperTest {
         Employee employee = new Employee();
         // Don't set employee.id
         user.setEmployee(employee);
-        user.setUserName("testuser");
+        user.setUsername("testuser");
         
         // Act
         UserDTO userDTO = mapper.toDto(user);

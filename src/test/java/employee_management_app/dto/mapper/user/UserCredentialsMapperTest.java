@@ -18,7 +18,7 @@ class UserCredentialsMapperTest {
     public void testToEntity() {
         // Arrange
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUserName("testuser");
+        userCredentialsDTO.setUsername("testuser");
         userCredentialsDTO.setPassword("password123");
 
         // Act
@@ -27,7 +27,7 @@ class UserCredentialsMapperTest {
         // Assert
         assertNotNull(user, "User should not be null");
         assertNull(user.getId(), "ID should be ignored and null");
-        assertEquals("testuser", user.getUserName(), "Username should match the source DTO");
+        assertEquals("testuser", user.getUsername(), "Username should match the source DTO");
         assertEquals("password123", user.getPassword(), "Password should match the source DTO");
         assertNull(user.getCreatedAt(), "CreatedAt should be ignored and null");
         assertNull(user.getUpdatedAt(), "UpdatedAt should be ignored and null");

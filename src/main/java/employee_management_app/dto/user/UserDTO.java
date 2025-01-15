@@ -3,7 +3,6 @@ package employee_management_app.dto.user;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import employee_management_app.model.enums.UserRole;
 import employee_management_app.model.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
 	private Long id;
-    private String userName;
+    private String username;
     private LocalDateTime lastLogin;
     private UserStatus status;
     private Set<String> permissions;

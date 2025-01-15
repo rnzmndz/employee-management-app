@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 
 import employee_management_app.config.WebSecurityConfig;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "employee_management_app")
 @Import(WebSecurityConfig.class)
 public class EmployeeManagementAppApplication {
 

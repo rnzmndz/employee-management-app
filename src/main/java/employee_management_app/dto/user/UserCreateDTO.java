@@ -3,7 +3,6 @@ package employee_management_app.dto.user;
 import java.util.HashSet;
 import java.util.Set;
 
-import employee_management_app.model.enums.UserRole;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class UserCreateDTO {
     @NotNull
     @Size(min = 3, max = 50)
-    private String userName;
+    private String username;
     
     @NotNull
     @Size(min = 6)

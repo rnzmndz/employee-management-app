@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
 	@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/", "/home", "/public/**").permitAll()
@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
