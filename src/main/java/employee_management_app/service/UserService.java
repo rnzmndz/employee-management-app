@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import employee_management_app.dto.user.UserCreateDTO;
+import employee_management_app.dto.user.UserCredentialsDTO;
 import employee_management_app.dto.user.UserDTO;
 import employee_management_app.dto.user.UserUpdateDTO;
 
@@ -37,7 +38,7 @@ public interface UserService {
      * @throws IllegalArgumentException if id is null
      * @since 1.0
      */
-    Optional<UserDTO> findById(Long id);
+    Optional<UserCredentialsDTO> findById(Long id);
 
     /**
      * Update an existing user's details.

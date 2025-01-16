@@ -52,7 +52,7 @@ INSERT INTO user_roles (user_id, role) VALUES
 (9, 'USER'),
 (10, 'USER'),
 (10, 'MODERATOR'),
-(12, 'USER'),
+(12, 'EMPLOYEE'),
 (11, 'ADMIN');
 
 -- Sample Schedules

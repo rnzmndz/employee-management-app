@@ -16,9 +16,6 @@ import employee_management_app.security.UserSecurity;
 @EnableWebSecurity
 public class WebSecurityConfig {
 	
-	@Autowired
-	private UserSecurity userSecurity;
-	
 	@Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -29,8 +26,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/attendance/**").hasRole("HR")
                 .requestMatchers("/api/schedules/**").hasRole("MANAGER")
                 .requestMatchers(HttpMethod.POST, "/api/users").hasRole("EMPLOYEE")
-                .requestMatchers(HttpMethod.GET, "/api/users/{id}").access(userSecurity)
-                .requestMatchers(HttpMethod.PUT, "/api/users/{id}").access(userSecurity)
+                .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasRole("EMPLOYEE")
+                .requestMatchers(HttpMethod.PUT, "/api/users/{id}").hasRole("EMPLOYEE")
                 .anyRequest().authenticated()
             )
             .formLogin((form) -> form

@@ -14,4 +14,6 @@ public interface UserCredentialsMapper {
 	@Mapping(target = "createdAt", ignore = true)
 	@Mapping(target = "updatedAt", ignore = true)
 	AppUser toEntity(UserCredentialsDTO userCredentialsDTO);
+	
+	UserCredentialsDTO toDto(AppUser appUser);
 }

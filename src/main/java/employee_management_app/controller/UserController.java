@@ -3,10 +3,13 @@ package employee_management_app.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import employee_management_app.dto.user.UserCreateDTO;
+import employee_management_app.dto.user.UserCredentialsDTO;
 import employee_management_app.dto.user.UserDTO;
 import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.exception.UserNotFoundException;
@@ -76,8 +80,25 @@ public class UserController {
      * @throws ResponseStatusException if the user is not found (HTTP 404 Not Found)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        return userService.findById(id)
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        // Get current authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        // Get requested user
+        Optional<UserCredentialsDTO> userCredential = userService.findById(id);
+        
+        // Check if userCredential is present
+        if (userCredential.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        // Check if the authenticated user is requesting their own data
+        if (!userCredential.get().getUsername().equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
+        }
+
+        return userService.findByUsername(username)
                 .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }

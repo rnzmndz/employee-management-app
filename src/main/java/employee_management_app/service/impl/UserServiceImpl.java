@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import employee_management_app.dto.mapper.user.UserCreateMapper;
+import employee_management_app.dto.mapper.user.UserCredentialsMapper;
 import employee_management_app.dto.mapper.user.UserMapper;
 import employee_management_app.dto.mapper.user.UserUpdateMapper;
 import employee_management_app.dto.user.UserCreateDTO;
+import employee_management_app.dto.user.UserCredentialsDTO;
 import employee_management_app.dto.user.UserDTO;
 import employee_management_app.dto.user.UserUpdateDTO;
 import employee_management_app.exception.UserNotFoundException;
@@ -38,8 +40,8 @@ public class UserServiceImpl implements UserService {
     private UserCreateMapper createMapper;
     @Autowired
     private UserUpdateMapper updateMapper;
-//    @Autowired
-//    private UserCredentialsMapper credentialsMapper;
+    @Autowired
+    private UserCredentialsMapper credentialsMapper;
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
@@ -93,7 +95,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<UserDTO> findById(Long id) {
+	public Optional<UserCredentialsDTO> findById(Long id) {
 //		if the id is null or empty it will throw an IllegalArgumentException
 		if (id == null) {
 			throw new IllegalArgumentException("The username input is empty or null");
@@ -104,7 +106,7 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 
-		return Optional.of(userMapper.toDto(user.get()));
+		return Optional.of(credentialsMapper.toDto(user.get()));
 	}
 
 	@Override

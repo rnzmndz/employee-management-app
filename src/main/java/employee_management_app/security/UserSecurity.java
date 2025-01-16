@@ -6,33 +6,75 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 @Component
 public class UserSecurity implements AuthorizationManager<RequestAuthorizationContext> {
+    
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final Pattern numericPattern = Pattern.compile("^[0-9]+$");
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext context) {
-        HttpServletRequest request = context.getRequest();
-        String employeeId = extractPathVariable(request.getRequestURI(), "users");
-        String currentUserId = ((UserDetails) authentication.get().getPrincipal()).getUsername();
+        try {
+            HttpServletRequest request = context.getRequest();
+            
+            // Get the current authenticated user
+            Authentication auth = authentication.get();
+            if (auth == null || !auth.isAuthenticated()) {
+                return new AuthorizationDecision(false);
+            }
 
-        boolean isAuthorized = currentUserId.equals(employeeId);
-        return new AuthorizationDecision(isAuthorized);
+            Object principal = auth.getPrincipal();
+            if (!(principal instanceof UserDetails)) {
+                return new AuthorizationDecision(false);
+            }
+
+            // Extract user ID from the current request
+            String requestedUserId = extractPathVariable(request.getRequestURI());
+            if (requestedUserId == null) {
+                return new AuthorizationDecision(false);
+            }
+
+            // Get current user's ID
+            String currentUserId = ((UserDetails) principal).getUsername();
+
+            // Validate both IDs are numeric (if using numeric IDs)
+            if (!numericPattern.matcher(requestedUserId).matches() || 
+                !numericPattern.matcher(currentUserId).matches()) {
+                return new AuthorizationDecision(false);
+            }
+
+            // Check if the current user is accessing their own data
+            boolean isAuthorized = currentUserId.equals(requestedUserId);
+            
+            // You could also add additional checks here, like admin override
+            // boolean isAdmin = auth.getAuthorities().stream()
+            //     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            // isAuthorized = isAuthorized || isAdmin;
+
+            return new AuthorizationDecision(isAuthorized);
+            
+        } catch (Exception e) {
+            // Log the error here
+            return new AuthorizationDecision(false);
+        }
     }
 
-    private String extractPathVariable(String uri, String variableName) {
-        // Assuming a simple URI structure for illustration, adjust as needed
-        String[] parts = uri.split("/");
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].equals(variableName) && i + 1 < parts.length) {
-                return parts[i + 1];
+    private String extractPathVariable(String uri) {
+        String[] segments = uri.split("/");
+        for (int i = 0; i < segments.length - 1; i++) {
+            if (segments[i].equals("users") && i + 1 < segments.length) {
+                // Handle potential query parameters
+                String id = segments[i + 1];
+                int queryParamIndex = id.indexOf('?');
+                return queryParamIndex > 0 ? id.substring(0, queryParamIndex) : id;
             }
         }
         return null;
     }
 }
-
